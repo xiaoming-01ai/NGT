@@ -253,14 +253,14 @@ public:
     for (size_t r = 0; r < nr; r++) {
       for (size_t c = 0; c < nc; c++) {
 	m[c * nr + r] = *msrc++;
-	//std::cerr << r * nc + c << std::endl;
+	//CERR   << r * nc + c << std::endl;
       }
     }
 #else
     for (size_t c = 0; c < nc; c++) {
       for (size_t r = 0; r < nr; r++) {
 	m[r * nc + c] = *msrc++;
-	//std::cerr << r * nc + c << std::endl;
+	//CERR   << r * nc + c << std::endl;
       }
     }
 #endif
@@ -291,7 +291,7 @@ public:
     if (transpose) {
       transb = 'T';
       if (row != mtx.row) {
-	std::cerr << "mul:" << row << "x" << mtx.row << std::endl;
+	CERR   << "mul:" << row << "x" << mtx.row << std::endl;
       }
       assert(row == mtx.row);
       n = mtx.row;
@@ -299,7 +299,7 @@ public:
       col = mtx.row;
     } else {
       if (col != mtx.row) {
-	std::cerr << "mul:" << col << "x" << mtx.row << std::endl;
+	CERR   << "mul:" << col << "x" << mtx.row << std::endl;
       }
       assert(col == mtx.row);
       row = m;
@@ -326,11 +326,11 @@ public:
 
   void mulNaive(const Matrix<T> &mtx) {
 #ifdef MATRIX_TRACE
-    cerr << row << "x" << col << " mtx=" << mtx.row << "x" << mtx.col << std::endl;
-    std::cerr << mtx << std::endl;
+    CERR <<  " " <<row << "x" << col << " mtx=" << mtx.row << "x" << mtx.col << std::endl;
+    CERR   << mtx << std::endl;
 #endif
     if (col != mtx.row) {
-      std::cerr << "mul:" << col << "x" << mtx.row << std::endl;
+      CERR   << "mul:" << col << "x" << mtx.row << std::endl;
     }
     assert(col == mtx.row);
     size_t nr = row;
@@ -361,7 +361,7 @@ public:
 
   void diag(const Matrix<T> &m) {
     if (m.row != 1 && m.col != 1) {
-      std::cerr << "Error : not vector. " << m.row << "x" << m.col << std::endl;
+      CERR   << "Error : not vector. " << m.row << "x" << m.col << std::endl;
       return;
     }
     size_t length = m.row > m.col ? m.row : m.col;
@@ -635,7 +635,7 @@ public:
       if (row == 0) {
 	row = v.size();
       } else if (row != v.size()) {
-	std::cerr << "somthing wrong." << std::endl;
+	CERR   << "somthing wrong." << std::endl;
 	abort();
       }
       col++;
@@ -643,7 +643,7 @@ public:
       if (col == 0) {
 	col = v.size();
       } else if (col != v.size()) {
-	std::cerr << "somthing wrong." << std::endl;
+	CERR   << "somthing wrong." << std::endl;
 	abort();
       }
       row++;

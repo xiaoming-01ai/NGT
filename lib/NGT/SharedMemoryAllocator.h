@@ -43,7 +43,7 @@ class SharedMemoryAllocator {
 
   SharedMemoryAllocator():isValid(false) {
 #ifdef SMA_TRACE
-    std::cerr << "SharedMemoryAllocatorSiglton::constructor" << std::endl;
+    std::cerr <<  " "  << "SharedMemoryAllocatorSiglton::constructor" << std::endl;
 #endif
   }
   SharedMemoryAllocator(const SharedMemoryAllocator& a){}
@@ -51,12 +51,12 @@ class SharedMemoryAllocator {
  public:
   void* allocate(size_t size) {
     if (isValid == false) {
-      std::cerr << "SharedMemoryAllocator::allocate: Fatal error! " << std::endl;
+      std::cerr <<  " "  << "SharedMemoryAllocator::allocate: Fatal error! " << std::endl;
       assert(isValid);
     }
 #ifdef SMA_TRACE
-    std::cerr << "SharedMemoryAllocator::allocate: size=" << size << std::endl;
-    std::cerr << "SharedMemoryAllocator::allocate: before " << getTotalSize() << ":" << getAllocatedSize() << ":" << getFreedSize() << std::endl;
+    std::cerr <<  " "  << "SharedMemoryAllocator::allocate: size=" << size << std::endl;
+    std::cerr <<  " "  << "SharedMemoryAllocator::allocate: before " << getTotalSize() << ":" << getAllocatedSize() << ":" << getFreedSize() << std::endl;
 #endif
 #if defined(MMAP_MANAGER) && !defined(NOT_USE_MMAP_ALLOCATOR)
     if(!isValid){
@@ -64,14 +64,14 @@ class SharedMemoryAllocator {
     }
     off_t file_offset = mmanager->alloc(size, true);	
     if (file_offset == -1) {
-      std::cerr << "Fatal Error: Allocating memory size is too big for this settings." << std::endl;
-      std::cerr << "             Max allocation size should be enlarged." << std::endl;
+      std::cerr <<  " "  << "Fatal Error: Allocating memory size is too big for this settings." << std::endl;
+      std::cerr <<  " "  << "             Max allocation size should be enlarged." << std::endl;
       abort();
     }
     void *p = mmanager->getAbsAddr(file_offset);
     std::memset(p, 0, size);
 #ifdef SMA_TRACE
-    std::cerr << "SharedMemoryAllocator::allocate: end" <<std::endl;
+    std::cerr <<  " "  << "SharedMemoryAllocator::allocate: end" <<std::endl;
 #endif
     return p;
 #else
@@ -82,10 +82,10 @@ class SharedMemoryAllocator {
   }
   void free(void *ptr) {
 #ifdef SMA_TRACE
-    std::cerr << "SharedMemoryAllocator::free: ptr=" << ptr << std::endl;
+    std::cerr <<  " "  << "SharedMemoryAllocator::free: ptr=" << ptr << std::endl;
 #endif
     if (ptr == 0) {
-      std::cerr << "SharedMemoryAllocator::free: ptr is invalid! ptr=" << ptr << std::endl;
+      std::cerr <<  " "  << "SharedMemoryAllocator::free: ptr is invalid! ptr=" << ptr << std::endl;
     }
     if (ptr == 0) {
       return;
@@ -101,7 +101,7 @@ class SharedMemoryAllocator {
   void *construct(const std::string &filePath, size_t memorysize = 0) {
     file = filePath;	// debug
 #ifdef SMA_TRACE
-    std::cerr << "ObjectSharedMemoryAllocator::construct: file " << filePath << std::endl;
+    std::cerr <<  " "  << "ObjectSharedMemoryAllocator::construct: file " << filePath << std::endl;
 #endif
     void *hook = 0;
 #ifdef MMAP_MANAGER
@@ -120,21 +120,21 @@ class SharedMemoryAllocator {
     bool create = true;
     if(!mmanager->init(filePath, size, &option)){
 #ifdef SMA_TRACE
-      std::cerr << "SMA: info. already existed." << std::endl;
+      std::cerr <<  " "  << "SMA: info. already existed." << std::endl;
 #endif
       create = false;
     } else {
 #ifdef SMA_TRACE
-      std::cerr << "SMA::construct: msize=" << msize << ":" << memorysize << std::endl;
+      std::cerr <<  " "  << "SMA::construct: msize=" << msize << ":" << memorysize << std::endl;
 #endif
     }
     if(!mmanager->openMemory(filePath)){
-      std::cerr << "SMA: open error" << std::endl;
+      std::cerr <<  " "  << "SMA: open error" << std::endl;
       return 0;
     }
     if (!create) {
 #ifdef SMA_TRACE
-      std::cerr << "SMA: get hook to initialize data structure" << std::endl;
+      std::cerr <<  " "  << "SMA: get hook to initialize data structure" << std::endl;
 #endif
       hook = mmanager->getEntryHook();
       assert(hook != 0);
@@ -142,7 +142,7 @@ class SharedMemoryAllocator {
 #endif
     isValid = true;
 #ifdef SMA_TRACE
-    std::cerr << "SharedMemoryAllocator::construct: " << filePath << " total="
+    std::cerr <<  " "  << "SharedMemoryAllocator::construct: " << filePath << " total="
 	      << getTotalSize() << " allocated=" << getAllocatedSize() << " freed="
 	      << getFreedSize() << " (" << (double)getFreedSize() / (double)getTotalSize() << ") " << std::endl;
 #endif

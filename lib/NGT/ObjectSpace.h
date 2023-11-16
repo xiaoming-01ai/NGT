@@ -82,7 +82,7 @@ namespace NGT {
 	pq.pop();
       }
       if (pq.size() != 0 && pq.top().id != id) {
-	std::cerr << "moveFrom: Fatal error: somethig wrong! " << pq.size() << ":" << this->size() << ":" << id << ":" << pq.top().id << std::endl;
+	CERR <<  " "  << "moveFrom: Fatal error: somethig wrong! " << pq.size() << ":" << this->size() << ":" << id << ":" << pq.top().id << std::endl;
 	assert(pq.size() == 0 || pq.top().id == id);
       }
     }
@@ -127,7 +127,7 @@ namespace NGT {
     {
       clear();
       reserve(objs.size());
-      std::cerr << "not implemented" << std::endl;
+      CERR <<  " "  << "not implemented" << std::endl;
       assert(0);
       return *this;
     }
@@ -362,7 +362,7 @@ namespace NGT {
       } else if (t == typeid(uint32_t)) {
 	NGT::Serializer::writeAsText(os, (uint32_t*)ref, dimension);
       } else {
-	std::cerr << "Object::serializeAsText: not supported data type. [" << t.name() << "]" << std::endl;
+	CERR <<  " "  << "Object::serializeAsText: not supported data type. [" << t.name() << "]" << std::endl;
 	assert(0);
       }
     }
@@ -389,7 +389,7 @@ namespace NGT {
       } else if (t == typeid(uint32_t)) {
 	NGT::Serializer::readAsText(is, (uint32_t*)ref, dimension);
       } else {
-	std::cerr << "Object::deserializeAsText: not supported data type. [" << t.name() << "]" << std::endl;
+	CERR <<  " "  << "Object::deserializeAsText: not supported data type. [" << t.name() << "]" << std::endl;
 	assert(0);
       }
     }
@@ -515,7 +515,7 @@ namespace NGT {
       return a[idx];
     }
     uint8_t &operator[](size_t idx) const {
-      std::cerr << "not implemented" << std::endl;
+      CERR <<  " "  << "not implemented" << std::endl;
       assert(0);
       uint8_t *a = 0;
       return a[idx];
@@ -550,7 +550,7 @@ namespace NGT {
 
     void serialize(std::ostream &os, SharedMemoryAllocator &allocator,
 		   ObjectSpace *objectspace = 0) {
-      std::cerr << "serialize is not implemented" << std::endl;
+      CERR <<  " "  << "serialize is not implemented" << std::endl;
       assert(0);
     }
 

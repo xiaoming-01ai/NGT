@@ -72,11 +72,11 @@ namespace MemoryManager{
         return false;
       }
       if(filePath.length() > MMAP_MAX_FILE_NAME_LENGTH){
-        std::cerr << "too long filepath" << std::endl;
+        std::cerr <<  " "  << "too long filepath" << std::endl;
         return false;
       }
       if((size % sysconf(_SC_PAGESIZE) != 0) || ( size < MMAP_LOWER_SIZE )){
-        std::cerr << "input size error" << std::endl;
+        std::cerr <<  " "  << "input size error" << std::endl;
         return false;
       }
        
@@ -87,10 +87,10 @@ namespace MemoryManager{
       char *cntl_p = (char *)mmap(NULL, MMAP_CNTL_FILE_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
       if(cntl_p == MAP_FAILED){
         const std::string err_str = getErrorStr(errno);
-        if(close(fd) == -1) std::cerr << controlFile << "[WARN] : filedescript cannot close" << std::endl;
+        if(close(fd) == -1) std::cerr <<  " "  << controlFile << "[WARN] : filedescript cannot close" << std::endl;
         throw MmapManagerException(controlFile + " " + err_str);
       }
-      if(close(fd) == -1) std::cerr << controlFile << "[WARN] : filedescript cannot close" << std::endl;
+      if(close(fd) == -1) std::cerr <<  " "  << controlFile << "[WARN] : filedescript cannot close" << std::endl;
       
       try {
 	fd = _impl->formatFile(filePath, size);
@@ -101,7 +101,7 @@ namespace MemoryManager{
 	}
         throw err;
       }
-      if(close(fd) == -1) std::cerr << controlFile << "[WARN] : filedescript cannot close" << std::endl;
+      if(close(fd) == -1) std::cerr <<  " "  << controlFile << "[WARN] : filedescript cannot close" << std::endl;
       
       boot_st bootStruct = {0};
       control_st controlStruct = {0};
@@ -124,7 +124,7 @@ namespace MemoryManager{
       
       return true;
     }catch(MmapManagerException &e){
-      std::cerr << "init error. " << e.what() << std::endl;
+      std::cerr <<  " "  << "init error. " << e.what() << std::endl;
       throw e;
     }
   }
@@ -152,13 +152,13 @@ namespace MemoryManager{
       boot_st *boot_p = (boot_st*)mmap(NULL, MMAP_CNTL_FILE_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
       if(boot_p == MAP_FAILED){
         const std::string err_str = getErrorStr(errno);
-        if(close(fd) == -1) std::cerr << controlFile << "[WARN] : filedescript cannot close" << std::endl;
+        if(close(fd) == -1) std::cerr <<  " "  << controlFile << "[WARN] : filedescript cannot close" << std::endl;
         throw MmapManagerException(controlFile + " " + err_str);
       }
-      if(close(fd) == -1) std::cerr << controlFile << "[WARN] : filedescript cannot close" << std::endl;
+      if(close(fd) == -1) std::cerr <<  " "  << controlFile << "[WARN] : filedescript cannot close" << std::endl;
       
       if(boot_p->version != MMAP_MANAGER_VERSION){
-        std::cerr << "[WARN] : version error" << std::endl;
+        std::cerr <<  " "  << "[WARN] : version error" << std::endl;
         errno = 0;
         if(munmap(boot_p, MMAP_CNTL_FILE_SIZE) == -1) throw MmapManagerException("munmap error : " + getErrorStr(errno));
         throw MmapManagerException("MemoryManager version error");
@@ -181,23 +181,23 @@ namespace MemoryManager{
         _impl->mmapDataAddr[i] = mmap(NULL, _impl->mmapCntlHead->base_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, offset);
         if(_impl->mmapDataAddr[i] == MAP_FAILED){
 	  if (errno == EINVAL) {
-	    std::cerr << "MmapManager::openMemory: Fatal error. EINVAL" << std::endl
+	    std::cerr <<  " "  << "MmapManager::openMemory: Fatal error. EINVAL" << std::endl
 		      << "  If you use valgrind, this error might occur when the DB is created." << std::endl
 		      << "  In the case of that, reduce bsize in SharedMemoryAllocator." << std::endl;
 	    assert(errno != EINVAL);
 	  }
           const std::string err_str = getErrorStr(errno);
-          if(close(fd) == -1) std::cerr << controlFile << "[WARN] : filedescript cannot close" << std::endl;
+          if(close(fd) == -1) std::cerr <<  " "  << controlFile << "[WARN] : filedescript cannot close" << std::endl;
           closeMemory(true);
           throw MmapManagerException(err_str);
         }
       }
-      if(close(fd) == -1) std::cerr << controlFile << "[WARN] : filedescript cannot close" << std::endl;
+      if(close(fd) == -1) std::cerr <<  " "  << controlFile << "[WARN] : filedescript cannot close" << std::endl;
       
       _impl->isOpen = true;
       return true;
     }catch(MmapManagerException &e){
-      std::cerr << "open error" << std::endl;
+      std::cerr <<  " "  << "open error" << std::endl;
       throw e;
     }
   }
@@ -236,7 +236,7 @@ namespace MemoryManager{
         _impl->isOpen = false;
       }
     }catch(MmapManagerException &e){
-      std::cerr << "close error" << std::endl;
+      std::cerr <<  " "  << "close error" << std::endl;
       throw e;
     }
   }
@@ -245,14 +245,14 @@ namespace MemoryManager{
   {
     try{
       if(!_impl->isOpen){
-        std::cerr << "not open this file" << std::endl;
+        std::cerr <<  " "  << "not open this file" << std::endl;
         return -1;
       }
 
       size_t alloc_size = getAlignSize(size);
 
       if( (alloc_size + sizeof(chunk_head_st)) >= _impl->mmapCntlHead->base_size ){
-        std::cerr << "alloc size over. size=" << size << "." << std::endl;
+        std::cerr <<  " "  << "alloc size over. size=" << size << "." << std::endl;
         return -1;
       }
 
@@ -273,12 +273,12 @@ namespace MemoryManager{
       if((unit_header->break_p + sizeof(chunk_head_st) + alloc_size) >= _impl->mmapCntlHead->base_size){
         if(_impl->mmapCntlHead->use_expand == true){
           if(_impl->expandMemory() == false){
-            std::cerr << __func__ << ": cannot expand" << std::endl;
+            std::cerr <<  " "  << __func__ << ": cannot expand" << std::endl;
             return -1;
           }
           unit_header = &_impl->mmapCntlHead->data_headers[_impl->mmapCntlHead->active_unit];
         }else{
-          std::cerr << __func__ << ": total size over" << std::endl;
+          std::cerr <<  " "  << __func__ << ": total size over" << std::endl;
           return -1;
         }
       }
@@ -293,7 +293,7 @@ namespace MemoryManager{
       
       return ret_p;
     }catch(MmapManagerException &e){
-      std::cerr << "allocation error" << std::endl;
+      std::cerr <<  " "  << "allocation error" << std::endl;
       throw e;
     }
   }

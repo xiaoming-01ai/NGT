@@ -386,46 +386,55 @@ QBG::CLI::buildQG(NGT::Args &args)
 
   QbgCliBuildParameters buildParameters(args);
   buildParameters.getBuildParameters();
+    
+  CERR <<  " " <<"begin to build QG." << endl;
 
   string indexPath;
   try {
     indexPath = args.get("#1");
   } catch (...) {
-    cerr << "An index is not specified." << endl;
-    cerr << usage << endl;
+    CERR <<  " " <<"An index is not specified." << endl;
+    CERR <<  " " <<usage << endl;
     return;
   }
+  
+  CERR <<  " " <<"buildQG. index path " << indexPath << endl;
 
   size_t phase = args.getl("p", 0);
   size_t maxNumOfEdges = args.getl("E", 128);
   
   const std::string qgPath = indexPath + "/qg";
 
+  CERR << "--------------------------------------" << std::endl;
   if (phase == 0 || phase == 1) {
     QBG::Optimizer optimizer(buildParameters);
     optimizer.globalType = QBG::Optimizer::GlobalTypeZero;
 
 #ifdef NGTQG_NO_ROTATION
     if (optimizer.rotation || optimizer.repositioning) {
-      std::cerr << "build-qg: Warning! Although rotation or repositioning is specified, turn off rotation and repositioning because of unavailable options." << std::endl;
+      CERR   << "build-qg: Warning! Although rotation or repositioning is specified, turn off rotation and repositioning because of unavailable options." << std::endl;
       optimizer.rotation = false;
       optimizer.repositioning = false;
     }
 #endif
 
-    std::cerr << "optimizing..." << std::endl;
+    CERR   <<  " optimizing..." << std::endl;
     optimizer.optimize(qgPath);
   }
+  CERR << "--------------------------------------" << std::endl;
   if (phase == 0 || phase == 2) {
-    std::cerr << "building the inverted index..." << std::endl;
+    CERR   << " building the inverted index..." << std::endl;
     bool verbose = false;
     QBG::Index::buildNGTQ(qgPath, verbose);
   }
+  CERR << "--------------------------------------" << std::endl;
   if (phase == 0 || phase == 3) {
-    std::cerr << "building the quantized graph... " << std::endl;
+    CERR   << " building the quantized graph... " << std::endl;
     bool verbose = false;
     NGTQG::Index::realign(indexPath, maxNumOfEdges, verbose);
   }
+  CERR << "--------------------------------------" << std::endl;
+  CERR   << " building quantized graph end... " << std::endl;
 }
 
 void
@@ -434,7 +443,7 @@ searchQG(NGTQG::Index &index, SearchParameters &searchParameters, ostream &strea
 
   std::ifstream		is(searchParameters.query);
   if (!is) {
-    std::cerr << "Cannot open the specified file. " << searchParameters.query << std::endl;
+    CERR   << "Cannot open the specified file. " << searchParameters.query << std::endl;
     return;
   }
 
@@ -554,8 +563,8 @@ QBG::CLI::searchQG(NGT::Args &args) {
   try {
     indexPath = args.get("#1");
   } catch (...) {
-    cerr << "An index is not specified." << endl;
-    cerr << usage << endl;
+    CERR <<  " " <<"An index is not specified." << endl;
+    CERR <<  " " <<usage << endl;
     return;
   }
 
@@ -565,24 +574,24 @@ QBG::CLI::searchQG(NGT::Args &args) {
   NGTQG::Index index(indexPath, 128, readOnly);
 
   if (debugLevel >= 1) {
-    cerr << "indexType=" << searchParameters.indexType << endl;
-    cerr << "size=" << searchParameters.size << endl;
-    cerr << "edgeSize=" << searchParameters.edgeSize << endl;
-    cerr << "epsilon=" << searchParameters.beginOfEpsilon << "<->" << searchParameters.endOfEpsilon << ","
+    CERR <<  " " <<"indexType=" << searchParameters.indexType << endl;
+    CERR <<  " " <<"size=" << searchParameters.size << endl;
+    CERR <<  " " <<"edgeSize=" << searchParameters.edgeSize << endl;
+    CERR <<  " " <<"epsilon=" << searchParameters.beginOfEpsilon << "<->" << searchParameters.endOfEpsilon << ","
 	 << searchParameters.stepOfEpsilon << endl;
   }
 
   try {
     ::searchQG(index, searchParameters, std::cout);
   } catch (NGT::Exception &err) {
-    cerr << "qbg: Error " << err.what() << endl;
-    cerr << usage << endl;
+    CERR <<  " " <<"qbg: Error " << err.what() << endl;
+    CERR <<  " " <<usage << endl;
   } catch (std::exception &err) {
-    cerr << "qbg: Error " << err.what() << endl;
-    cerr << usage << endl;
+    CERR <<  " " <<"qbg: Error " << err.what() << endl;
+    CERR <<  " " <<usage << endl;
   } catch (...) {
-    cerr << "qbg: Error" << endl;
-    cerr << usage << endl;
+    CERR <<  " " <<"qbg: Error" << endl;
+    CERR <<  " " <<usage << endl;
   }
 
 }
@@ -600,11 +609,11 @@ QBG::CLI::createQG(NGT::Args &args)
   try {
     indexPath = args.get("#1");
   } catch (...) {
-    cerr << "An index is not specified." << endl;
-    cerr << usage << endl;
+    CERR <<  " " <<"An index is not specified." << endl;
+    CERR <<  " " <<usage << endl;
     return;
   }
-  std::cerr << "creating..."  << std::endl;
+  CERR   << "creating... []"  << std::endl;
   NGTQG::Index::create(indexPath, buildParameters);
   NGTQG::Index::append(indexPath, buildParameters);
 }
@@ -617,8 +626,8 @@ QBG::CLI::appendQG(NGT::Args &args)
   try {
     indexPath = args.get("#1");
   } catch (...) {
-    cerr << "An index is not specified." << endl;
-    cerr << usage << endl;
+    CERR <<  " " <<"An index is not specified." << endl;
+    CERR <<  " " <<usage << endl;
     return;
   }
   QBG::Index::appendFromObjectRepository(indexPath, indexPath + "/qg", false);
@@ -634,8 +643,8 @@ QBG::CLI::info(NGT::Args &args)
   try {
     indexPath = args.get("#1");
   } catch (...) {
-    cerr << "Index is not specified" << endl;
-    cerr << usage << endl;
+    CERR <<  " " <<"Index is not specified" << endl;
+    CERR <<  " " <<usage << endl;
     return;
   }
 
@@ -658,8 +667,8 @@ QBG::CLI::info(NGT::Args &args)
       NGTQG::Index index(indexPath, 128, readOnly);
       std::cout << "The index type: QG" << std::endl;
     } catch (...) {
-      cerr << "qbg: The specified index is neither QBG nor QG." << std::endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"qbg: The specified index is neither QBG nor QG." << std::endl;
+      CERR <<  " " <<usage << endl;
     }
   }
 
@@ -678,7 +687,7 @@ QBG::CLI::create(NGT::Args &args)
     "index(OUT) data.tsv(IN) rotation(IN)";
 
   try {
-    cerr << "qbg: Create" << endl;
+    CERR <<  " " <<"qbg: Create" << endl;
     QbgCliBuildParameters buildParameters(args);
     buildParameters.getCreationParameters();
 
@@ -687,11 +696,11 @@ QBG::CLI::create(NGT::Args &args)
     {
       try {
 	std::string rotationPath = args.get("#3");
-	cerr << "rotation is " << rotationPath << "." << endl;
+	CERR <<  " " <<"rotation is " << rotationPath << "." << endl;
 	std::ifstream stream(rotationPath);
 	if (!stream) {
-	  std::cerr << "Cannot open the rotation. " << rotationPath << std::endl;
-	  cerr << usage << endl;
+	  CERR   << "Cannot open the rotation. " << rotationPath << std::endl;
+	  CERR <<  " " <<usage << endl;
 	  return;
 	}
 	std::string line;
@@ -705,7 +714,7 @@ QBG::CLI::create(NGT::Args &args)
       } catch (...) {
 	rotation = 0;
       }
-      std::cerr << "rotation matrix size=" << r.size() << std::endl;
+      CERR   << "rotation matrix size=" << r.size() << std::endl;
     }
     std::string indexPath = args.get("#1");
     std::string objectPath;
@@ -715,8 +724,8 @@ QBG::CLI::create(NGT::Args &args)
 
     QBG::Index::create(indexPath, buildParameters, rotation, objectPath);
   } catch(NGT::Exception &err) {
-    std::cerr << err.what() << std::endl;
-    cerr << usage << endl;
+    CERR   << err.what() << std::endl;
+    CERR <<  " " <<usage << endl;
   }
 }
 
@@ -732,12 +741,12 @@ QBG::CLI::load(NGT::Args &args)
   try {
     indexPath = args.get("#1");
   } catch (...) {
-    std::cerr << "Not specified the index." << std::endl;
-    std::cerr << usage << std::endl;
+    CERR   << "Not specified the index." << std::endl;
+    CERR   << usage << std::endl;
     return;
   }
 
-  std::cerr << "qbg: loading the specified blobs..." << std::endl;
+  CERR   << "qbg: loading the specified blobs..." << std::endl;
   std::string blobs;
   try {
     blobs = args.get("#2");
@@ -757,7 +766,7 @@ QBG::CLI::load(NGT::Args &args)
   try {
     rotationPath = args.get("#5");
   } catch (...) {}
-  cerr << "rotation is " << rotationPath << "." << endl;
+  CERR <<  " " <<"rotation is " << rotationPath << "." << endl;
 
   QBG::Index::load(indexPath, blobs, localCodebooks, quantizerCodebooks, rotationPath, threadSize);
 }
@@ -773,8 +782,8 @@ QBG::CLI::search(NGT::Args &args)
   try {
     indexPath = args.get("#1");
   } catch (...) {
-    cerr << "Index is not specified" << endl;
-    cerr << usage << endl;
+    CERR <<  " " <<"Index is not specified" << endl;
+    CERR <<  " " <<usage << endl;
     return;
   }
 
@@ -782,8 +791,8 @@ QBG::CLI::search(NGT::Args &args)
   try {
     query = args.get("#2");
   } catch (...) {
-    cerr << "Query is not specified" << endl;
-    cerr << usage << endl;
+    CERR <<  " " <<"Query is not specified" << endl;
+    CERR <<  " " <<usage << endl;
     return;
   }
 
@@ -805,7 +814,7 @@ QBG::CLI::search(NGT::Args &args)
   size_t nOfProbes = args.getl("P", 10);
   size_t nOfTrials = args.getl("T", 1);
   if (nOfTrials != 1) {
-    std::cerr << "# of trials=" << nOfTrials << std::endl;
+    CERR   << "# of trials=" << nOfTrials << std::endl;
   }
   std::vector<double> queryTimes;
 
@@ -833,20 +842,20 @@ QBG::CLI::search(NGT::Args &args)
     }
   }
   if (debugLevel >= 1) {
-    cerr << "size=" << size << endl;
-    cerr << "result expansion=" << beginOfResultExpansion << "->" << endOfResultExpansion << "," << stepOfResultExpansion << endl;
+    CERR <<  " " <<"size=" << size << endl;
+    CERR <<  " " <<"result expansion=" << beginOfResultExpansion << "->" << endOfResultExpansion << "," << stepOfResultExpansion << endl;
   }
 
   QBG::Index index(indexPath, true);
-  std::cerr << "qbg::The index is open." << std::endl;
-  std::cerr << "  vmsize=" << NGT::Common::getProcessVmSizeStr() << std::endl;
-  std::cerr << "  peak vmsize=" << NGT::Common::getProcessVmPeakStr() << std::endl;
+  CERR   << "qbg::The index is open." << std::endl;
+  CERR   << "  vmsize=" << NGT::Common::getProcessVmSizeStr() << std::endl;
+  CERR   << "  peak vmsize=" << NGT::Common::getProcessVmPeakStr() << std::endl;
   auto dimension = index.getQuantizer().globalCodebookIndex.getObjectSpace().getDimension();
   try {
     for (size_t trial = 0; trial < nOfTrials; trial++) {
       ifstream		is(query);
       if (!is) {
-	cerr << "Cannot open the specified file. " << query << endl;
+	CERR <<  " " <<"Cannot open the specified file. " << query << endl;
 	return;
       }
       if (outputMode == 's') { cout << "# Beginning of Evaluation" << endl; }
@@ -942,11 +951,11 @@ QBG::CLI::search(NGT::Args &args)
       }
     }
   } catch (NGT::Exception &err) {
-    cerr << "Error " << err.what() << endl;
-    cerr << usage << endl;
+    CERR <<  " " <<"Error " << err.what() << endl;
+    CERR <<  " " <<usage << endl;
   } catch (...) {
-    cerr << "Error" << endl;
-    cerr << usage << endl;
+    CERR <<  " " <<"Error" << endl;
+    CERR <<  " " <<usage << endl;
   }
   if (outputMode == 'e') {
     if (nOfTrials >= 1) {
@@ -970,16 +979,16 @@ QBG::CLI::append(NGT::Args &args)
   try {
     indexPath = args.get("#1");
   } catch (...) {
-    cerr << "Index is not specified." << endl;
-    cerr << usage << endl;
+    CERR <<  " " <<"Index is not specified." << endl;
+    CERR <<  " " <<usage << endl;
     return;
   }
   string data;
   try {
     data = args.get("#2");
   } catch (...) {
-    cerr << usage << endl;
-    cerr << "Data is not specified." << endl;
+    CERR <<  " " <<usage << endl;
+    CERR <<  " " <<"Data is not specified." << endl;
   }
 
   size_t dataSize = args.getl("n", 0);
@@ -988,17 +997,17 @@ QBG::CLI::append(NGT::Args &args)
 
   if (mode.find_first_of('e') != std::string::npos) {
     QBG::Index index(indexPath, false);
-    std::cerr << "size=" << index.getQuantizer().objectList.size() << std::endl;
+    CERR   << "size=" << index.getQuantizer().objectList.size() << std::endl;
     if (index.getQuantizer().objectList.size() > 1) {
       if (verbose) {
-	std::cerr << "QBG: Error. The index is not empty." << std::endl;
-	cerr << usage << endl;
+	CERR   << "QBG: Error. The index is not empty." << std::endl;
+	CERR <<  " " <<usage << endl;
       }
       return;
     }
   }
 
-  std::cerr << "qbg: appending..." << std::endl;
+  CERR   << "qbg: appending..." << std::endl;
   NGT::Timer timer;
   timer.start();
   if (mode.find_first_of('b') != std::string::npos) {
@@ -1007,7 +1016,7 @@ QBG::CLI::append(NGT::Args &args)
     QBG::Index::append(indexPath, data, dataSize, verbose);
   }
   timer.stop();
-  std::cerr << "qbg: appending time=" << timer << std::endl;
+  CERR   << "qbg: appending time=" << timer << std::endl;
 
 }
 
@@ -1020,8 +1029,8 @@ QBG::CLI::buildIndex(NGT::Args &args)
   try {
     indexPath = args.get("#1");
   } catch (...) {
-    cerr << "An index is not specified." << endl;
-    cerr << usage << endl;
+    CERR <<  " " <<"An index is not specified." << endl;
+    CERR <<  " " <<usage << endl;
     return;
   }
   char mode = args.getChar("m", '-');
@@ -1045,8 +1054,8 @@ QBG::CLI::buildIndex(NGT::Args &args)
 	}
 	std::ifstream stream(codebookPath);
 	if (!stream) {
-	  std::cerr << "Cannot open the codebook. " << codebookPath << std::endl;
-	  cerr << usage << endl;
+	  CERR   << "Cannot open the codebook. " << codebookPath << std::endl;
+	  CERR <<  " " <<usage << endl;
 	  return;
 	}
 	std::string line;
@@ -1058,16 +1067,16 @@ QBG::CLI::buildIndex(NGT::Args &args)
 	    object.push_back(NGT::Common::strtof(token));
 	  }
 	  if (!quantizerCodebook.empty() && quantizerCodebook[0].size() != object.size()) {
-	    cerr << "The specified quantizer codebook is invalid. " << quantizerCodebook[0].size()
+	    CERR <<  " " <<"The specified quantizer codebook is invalid. " << quantizerCodebook[0].size()
 		 << ":" << object.size() << ":" << quantizerCodebook.size() << ":" << line << endl;
-	    cerr << usage << endl;
+	    CERR <<  " " <<usage << endl;
 	    return;
 	  }
 	  if (!object.empty()) {
 	    quantizerCodebook.push_back(object);
 	  }
 	}
-	std::cerr << "The size of quantizerCodebook is " << quantizerCodebook.size() << std::endl;
+	CERR   << "The size of quantizerCodebook is " << quantizerCodebook.size() << std::endl;
       } catch (...) {}
     }
 
@@ -1079,11 +1088,11 @@ QBG::CLI::buildIndex(NGT::Args &args)
 	} catch (...) {
 	  codebookIndexPath = indexPath + "/ws/kmeans-cluster_bqindex.tsv";
 	}
-	cerr << "codebook index is " << codebookIndexPath << "." << endl;
+	CERR <<  " " <<"codebook index is " << codebookIndexPath << "." << endl;
 	std::ifstream stream(codebookIndexPath);
 	if (!stream) {
-	  std::cerr << "Cannot open the codebook index. " << codebookIndexPath << std::endl;
-	  cerr << usage << endl;
+	  CERR   << "Cannot open the codebook index. " << codebookIndexPath << std::endl;
+	  CERR <<  " " <<usage << endl;
 	  return;
 	}
 	std::string line;
@@ -1092,8 +1101,8 @@ QBG::CLI::buildIndex(NGT::Args &args)
 	  NGT::Common::tokenize(line, tokens, " \t");
 	  std::vector<float> object;
 	  if (tokens.size() != 1) {
-	    cerr << "The specified codebook index is invalid. " << line << std::endl;
-	    cerr << usage << endl;
+	    CERR <<  " " <<"The specified codebook index is invalid. " << line << std::endl;
+	    CERR <<  " " <<usage << endl;
 	    return;
 	  }
 	  codebookIndex.push_back(NGT::Common::strtol(tokens[0]));
@@ -1112,8 +1121,8 @@ QBG::CLI::buildIndex(NGT::Args &args)
 	}
 	std::ifstream stream(objectIndexPath);
 	if (!stream) {
-	  std::cerr << "Cannot open the codebook index. " << objectIndexPath << std::endl;
-	  cerr << usage << endl;
+	  CERR   << "Cannot open the codebook index. " << objectIndexPath << std::endl;
+	  CERR <<  " " <<usage << endl;
 	  return;
 	}
 	std::string line;
@@ -1122,8 +1131,8 @@ QBG::CLI::buildIndex(NGT::Args &args)
 	  NGT::Common::tokenize(line, tokens, " \t");
 	  std::vector<float> object;
 	  if (tokens.size() != 1) {
-	    cerr << "The specified codebook index is invalid. " << line << std::endl;
-	    cerr << usage << endl;
+	    CERR <<  " " <<"The specified codebook index is invalid. " << line << std::endl;
+	    CERR <<  " " <<usage << endl;
 	    return;
 	  }
 	  objectIndex.push_back(NGT::Common::strtol(tokens[0]));
@@ -1132,9 +1141,9 @@ QBG::CLI::buildIndex(NGT::Args &args)
       } catch (...) {}
     }
 
-    std::cerr << "quantizer codebook size=" << quantizerCodebook.size() << std::endl;
-    std::cerr << "codebook index size=" << codebookIndex.size() << std::endl;
-    std::cerr << "object index size=" << objectIndex.size() << std::endl;
+    CERR   << "quantizer codebook size=" << quantizerCodebook.size() << std::endl;
+    CERR   << "codebook index size=" << codebookIndex.size() << std::endl;
+    CERR   << "object index size=" << objectIndex.size() << std::endl;
 
     if (mode == 'q') {
       QBG::Index::buildNGTQ(indexPath, quantizerCodebook, codebookIndex, objectIndex, beginID, endID);
@@ -1163,8 +1172,8 @@ QBG::CLI::build(NGT::Args &args)
   try {
     indexPath = args.get("#1");
   } catch (...) {
-    cerr << "An index is not specified." << endl;
-    cerr << usage << endl;
+    CERR <<  " " <<"An index is not specified." << endl;
+    CERR <<  " " <<usage << endl;
     return;
   }
 
@@ -1186,8 +1195,8 @@ QBG::CLI::build(NGT::Args &args)
     }
     if (tokens.size() >= 2) { endOfPhase = NGT::Common::strtod(tokens[1]) - 1;}
     if (tokens.size() >= 3 || tokens.size() == 0) {
-      cerr << "The specified phases are invalid! " << phaseString << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"The specified phases are invalid! " << phaseString << endl;
+      CERR <<  " " <<usage << endl;
       return;
     }
     phase[0] = phase[1] = phase[2] = false;
@@ -1199,46 +1208,46 @@ QBG::CLI::build(NGT::Args &args)
   HierarchicalKmeans hierarchicalKmeans(buildParameters);
 
   if (phase[0]) {
-    std::cerr << "qbg: hierarchical clustering..." << std::endl;
+    CERR   << "qbg: hierarchical clustering..." << std::endl;
     NGT::Timer timer;
     timer.start();
     hierarchicalKmeans.clustering(indexPath);
     timer.stop();
     if (buildParameters.verbose) {
-      std::cerr << "qbg: hierarchical clustering successfully completed." << std::endl;;
-      std::cerr << "  ph0 time=" << timer << std::endl;
-      std::cerr << "  ph0 vmsize=" << NGT::Common::getProcessVmSizeStr() << std::endl;
-      std::cerr << "  ph0 peak vmsize=" << NGT::Common::getProcessVmPeakStr() << std::endl;
+      CERR   << "qbg: hierarchical clustering successfully completed." << std::endl;;
+      CERR   << "  ph0 time=" << timer << std::endl;
+      CERR   << "  ph0 vmsize=" << NGT::Common::getProcessVmSizeStr() << std::endl;
+      CERR   << "  ph0 peak vmsize=" << NGT::Common::getProcessVmPeakStr() << std::endl;
     }
   }
 
   QBG::Optimizer optimizer(buildParameters);
 
   if (phase[1]) {
-    std::cerr << "qbg: optimizing..." << std::endl;
+    CERR   << "qbg: optimizing..." << std::endl;
     NGT::Timer timer;
     timer.start();
     optimizer.optimize(indexPath);
     timer.stop();
     if (buildParameters.verbose) {
-      std::cerr << "qbg: optimization successfully completed." << std::endl;;
-      std::cerr << "  ph1 time=" << timer << std::endl;
-      std::cerr << "  ph1 vmsize=" << NGT::Common::getProcessVmSizeStr() << std::endl;
-      std::cerr << "  ph1 peak vmsize=" << NGT::Common::getProcessVmPeakStr() << std::endl;
+      CERR   << "qbg: optimization successfully completed." << std::endl;;
+      CERR   << "  ph1 time=" << timer << std::endl;
+      CERR   << "  ph1 vmsize=" << NGT::Common::getProcessVmSizeStr() << std::endl;
+      CERR   << "  ph1 peak vmsize=" << NGT::Common::getProcessVmPeakStr() << std::endl;
     }
   }
 
   if (phase[2]) {
-    std::cerr << "qbg: building..." << std::endl;
+    CERR   << "qbg: building..." << std::endl;
     NGT::Timer timer;
     timer.start();
     QBG::Index::build(indexPath, optimizer.verbose);
     timer.stop();
     if (buildParameters.verbose) {
-      std::cerr << "qbg: index build successfully completed." << std::endl;;
-      std::cerr << "  ph2 time=" << timer << std::endl;
-      std::cerr << "  ph2 vmsize=" << NGT::Common::getProcessVmSizeStr() << std::endl;
-      std::cerr << "  ph2 peak vmsize=" << NGT::Common::getProcessVmPeakStr() << std::endl;
+      CERR   << "qbg: index build successfully completed." << std::endl;;
+      CERR   << "  ph2 time=" << timer << std::endl;
+      CERR   << "  ph2 vmsize=" << NGT::Common::getProcessVmSizeStr() << std::endl;
+      CERR   << "  ph2 peak vmsize=" << NGT::Common::getProcessVmPeakStr() << std::endl;
     }
   }
 }
@@ -1256,25 +1265,25 @@ QBG::CLI::hierarchicalKmeans(NGT::Args &args)
   try {
     indexPath = args.get("#1");
   } catch (...) {
-    cerr << "Index is not specified" << endl;
-    cerr << usage << endl;
+    CERR <<  " " <<"Index is not specified" << endl;
+    CERR <<  " " <<usage << endl;
     return;
   }
 
   std::string prefix;
   try {
     prefix = args.get("#2");
-    std::cerr << "prefix=" << prefix << std::endl;
+    CERR   << "prefix=" << prefix << std::endl;
   } catch (...) {
-    std::cerr << "Prefix is not specified." << std::endl;
+    CERR   << "Prefix is not specified." << std::endl;
   }
 
   std::string objectIDsFile;
   try {
     objectIDsFile = args.get("#3");
-    std::cerr << "object IDs=" << objectIDsFile << std::endl;
+    CERR   << "object IDs=" << objectIDsFile << std::endl;
   } catch (...) {
-    cerr << "Object ID file is not specified" << endl;
+    CERR <<  " " <<"Object ID file is not specified" << endl;
   }
 
   HierarchicalKmeans hierarchicalKmeans(buildParameters);
@@ -1283,9 +1292,9 @@ QBG::CLI::hierarchicalKmeans(NGT::Args &args)
   hierarchicalKmeans.clustering(indexPath, prefix, objectIDsFile);
 
   if (buildParameters.verbose) {
-    std::cerr << "qbg: the end of clustering" << std::endl;
-    std::cerr << "  vmsize=" << NGT::Common::getProcessVmSizeStr() << std::endl;
-    std::cerr << "  peak vmsize=" << NGT::Common::getProcessVmPeakStr() << std::endl;
+    CERR   << "qbg: the end of clustering" << std::endl;
+    CERR   << "  vmsize=" << NGT::Common::getProcessVmSizeStr() << std::endl;
+    CERR   << "  peak vmsize=" << NGT::Common::getProcessVmPeakStr() << std::endl;
   }
 
 }
@@ -1299,8 +1308,8 @@ QBG::CLI::assign(NGT::Args &args)
   try {
     indexPath = args.get("#1");
   } catch (...) {
-    cerr << "Any index is not specified" << endl;
-    cerr << usage << endl;
+    CERR <<  " " <<"Any index is not specified" << endl;
+    CERR <<  " " <<usage << endl;
     return;
   }
 
@@ -1309,8 +1318,8 @@ QBG::CLI::assign(NGT::Args &args)
   try {
     queryPath = args.get("#2");
   } catch (...) {
-    cerr << "Any query is not specified" << endl;
-    cerr << usage << endl;
+    CERR <<  " " <<"Any query is not specified" << endl;
+    CERR <<  " " <<usage << endl;
     return;
   }
 
@@ -1324,7 +1333,7 @@ QBG::CLI::assign(NGT::Args &args)
     index.getProperty(property);
     ifstream		is(queryPath);
     if (!is) {
-      std::cerr << "Cannot open the query file. " << queryPath << std::endl;
+      CERR   << "Cannot open the query file. " << queryPath << std::endl;
       return;
     }
     string		line;
@@ -1338,7 +1347,7 @@ QBG::CLI::assign(NGT::Args &args)
 	  query.push_back(value);
 	}
 	if (static_cast<size_t>(property.dimension) != query.size()) {
-	  std::cerr << "Dimension is invallid. " << property.dimension << ":" << query.size() << std::endl;
+	  CERR   << "Dimension is invallid. " << property.dimension << ":" << query.size() << std::endl;
 	  return;
 	}
       }
@@ -1350,7 +1359,7 @@ QBG::CLI::assign(NGT::Args &args)
 
       index.search(sc);
       if (objects.size() == 0) {
-	std::cerr << "The result is empty. Something wrong." << std::endl;
+	CERR   << "The result is empty. Something wrong." << std::endl;
 	return;
       }
       if (mode == '-') {
@@ -1360,10 +1369,10 @@ QBG::CLI::assign(NGT::Args &args)
       }
     }
   } catch (NGT::Exception &err) {
-    cerr << "Error " << err.what() << endl;
+    CERR <<  " " <<"Error " << err.what() << endl;
     return;
   } catch (...) {
-    cerr << "Error" << endl;
+    CERR <<  " " <<"Error" << endl;
     return;
   }
 }
@@ -1378,8 +1387,8 @@ QBG::CLI::extract(NGT::Args &args)
   try {
     objectPath = args.get("#1");
   } catch (...) {
-    std::cerr << "Object file is not specified." << std::endl;
-    std::cerr << usage << std::endl;
+    CERR   << "Object file is not specified." << std::endl;
+    CERR   << usage << std::endl;
     return;
   }
 
@@ -1431,7 +1440,7 @@ QBG::CLI::extract(NGT::Args &args)
 	  loader.seek(id);
 	  auto object = loader.getObject();
 	  if (cnt + 1 % 100000 == 0) {
-	    std::cerr << "loaded " << static_cast<float>(cnt + 1) / 1000000.0 << "M objects." << std::endl;
+	    CERR   << "loaded " << static_cast<float>(cnt + 1) / 1000000.0 << "M objects." << std::endl;
 	  }
 	  if (dim != 0) {
 	    object.resize(dim, 0.0);
@@ -1450,7 +1459,7 @@ QBG::CLI::extract(NGT::Args &args)
 	  auto object = loader.getObject();
 	  cnt++;
 	  if (cnt % 100000 == 0) {
-	    std::cerr << "loaded " << static_cast<float>(cnt) / 1000000.0 << "M objects." << std::endl;
+	    CERR   << "loaded " << static_cast<float>(cnt) / 1000000.0 << "M objects." << std::endl;
 	  }
 	  if (dim != 0) {
 	    object.resize(dim, 0.0);
@@ -1468,7 +1477,7 @@ QBG::CLI::extract(NGT::Args &args)
 	}
       }
     } catch (...) {
-      cerr << "Error" << endl;
+      CERR <<  " " <<"Error" << endl;
       return;
     }
   }
@@ -1483,14 +1492,14 @@ QBG::CLI::gt(NGT::Args &args)
   try {
     path = args.get("#1");
   } catch (...) {
-    std::cerr << "An object file is not specified." << std::endl;
+    CERR   << "An object file is not specified." << std::endl;
     return;
   }
 
   std::ifstream stream;
   stream.open(path, std::ios::in | std::ios::binary);
   if (!stream) {
-    std::cerr << "Error!" << std::endl;
+    CERR   << "Error!" << std::endl;
     return;
   }
   uint32_t numQueries;
@@ -1498,8 +1507,8 @@ QBG::CLI::gt(NGT::Args &args)
   
   stream.read(reinterpret_cast<char*>(&numQueries), sizeof(numQueries));
   stream.read(reinterpret_cast<char*>(&k), sizeof(k));
-  std::cerr << "# of queries=" << numQueries << std::endl;
-  std::cerr << "k=" << k << std::endl;
+  CERR   << "# of queries=" << numQueries << std::endl;
+  CERR   << "k=" << k << std::endl;
 
   {
     std::ofstream idf;
@@ -1545,14 +1554,14 @@ QBG::CLI::gtRange(NGT::Args &args)
   try {
     path = args.get("#1");
   } catch (...) {
-    std::cerr << "An object file is not specified." << std::endl;
+    CERR   << "An object file is not specified." << std::endl;
     return;
   }
 
   std::ifstream stream;
   stream.open(path, std::ios::in | std::ios::binary);
   if (!stream) {
-    std::cerr << "Error!" << std::endl;
+    CERR   << "Error!" << std::endl;
     return;
   }
   uint32_t numQueries;
@@ -1560,8 +1569,8 @@ QBG::CLI::gtRange(NGT::Args &args)
   
   stream.read(reinterpret_cast<char*>(&numQueries), sizeof(numQueries));
   stream.read(reinterpret_cast<char*>(&totalRes), sizeof(totalRes));
-  std::cerr << "# of queries=" << numQueries << std::endl;
-  std::cerr << "totalRes=" << totalRes << std::endl;
+  CERR   << "# of queries=" << numQueries << std::endl;
+  CERR   << "totalRes=" << totalRes << std::endl;
 
   std::vector<uint32_t> numResultsPerQuery(numQueries);
   for (size_t qidx = 0; qidx < numQueries; qidx++) {
@@ -1597,7 +1606,7 @@ QBG::CLI::gtRange(NGT::Args &args)
       }
     }
     if (count != totalRes) {
-      std::cerr << "Fatal error. " << count << ":" << totalRes << std::endl;
+      CERR   << "Fatal error. " << count << ":" << totalRes << std::endl;
     }
   }
 }
@@ -1616,8 +1625,8 @@ QBG::CLI::optimize(NGT::Args &args)
   try {
     indexPath = args.get("#1");
   } catch(...) {
-    cerr << "qbg: index is not specified." << endl;
-    cerr << usage << endl;
+    CERR <<  " " <<"qbg: index is not specified." << endl;
+    CERR <<  " " <<usage << endl;
     return;
   }
 

@@ -198,15 +198,15 @@ using namespace std;
       CreateParameters createParameters(args);
 
       if (debugLevel >= 1) {
-	cerr << "edgeSizeForCreation=" << createParameters.property.edgeSizeForCreation << endl;
-	cerr << "edgeSizeForSearch=" << createParameters.property.edgeSizeForSearch << endl;
-	cerr << "edgeSizeLimit=" << createParameters.property.edgeSizeLimitForCreation << endl;
-	cerr << "batch size=" << createParameters.property.batchSizeForCreation << endl;
-	cerr << "graphType=" << createParameters.property.graphType << endl;
-	cerr << "epsilon=" << createParameters.property.insertionRadiusCoefficient - 1.0 << endl;
-	cerr << "thread size=" << createParameters.property.threadPoolSize << endl;
-	cerr << "dimension=" << createParameters.property.dimension << endl;
-	cerr << "indexType=" << createParameters.indexType << endl;
+	CERR <<  " " <<"edgeSizeForCreation=" << createParameters.property.edgeSizeForCreation << endl;
+	CERR <<  " " <<"edgeSizeForSearch=" << createParameters.property.edgeSizeForSearch << endl;
+	CERR <<  " " <<"edgeSizeLimit=" << createParameters.property.edgeSizeLimitForCreation << endl;
+	CERR <<  " " <<"batch size=" << createParameters.property.batchSizeForCreation << endl;
+	CERR <<  " " <<"graphType=" << createParameters.property.graphType << endl;
+	CERR <<  " " <<"epsilon=" << createParameters.property.insertionRadiusCoefficient - 1.0 << endl;
+	CERR <<  " " <<"thread size=" << createParameters.property.threadPoolSize << endl;
+	CERR <<  " " <<"dimension=" << createParameters.property.dimension << endl;
+	CERR <<  " " <<"indexType=" << createParameters.indexType << endl;
       }
 
       switch (createParameters.indexType) {
@@ -218,8 +218,8 @@ using namespace std;
 	break;
       }
     } catch(NGT::Exception &err) {
-      std::cerr << err.what() << std::endl;
-      cerr << usage << endl;
+      CERR   << err.what() << std::endl;
+      CERR <<  " " <<usage << endl;
     }
   }
 
@@ -232,15 +232,15 @@ using namespace std;
     try {
       database = args.get("#1");
     } catch (...) {
-      cerr << "ngt: Error: DB is not specified." << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"ngt: Error: DB is not specified." << endl;
+      CERR <<  " " <<usage << endl;
       return;
     }
     string data;
     try {
       data = args.get("#2");
     } catch (...) {
-      cerr << "ngt: Warning: No specified object file. Just build an index for the existing objects." << endl;
+      CERR <<  " " <<"ngt: Warning: No specified object file. Just build an index for the existing objects." << endl;
     }
 
     int threadSize = args.getl("p", 50);
@@ -248,19 +248,19 @@ using namespace std;
     size_t dataSize = args.getl("n", 0);
 
     if (debugLevel >= 1) {
-      cerr << "thread size=" << threadSize << endl;
-      cerr << "dimension=" << dimension << endl;
+      CERR <<  " " <<"thread size=" << threadSize << endl;
+      CERR <<  " " <<"dimension=" << dimension << endl;
     }
 
 
     try {
       NGT::Index::append(database, data, threadSize, dataSize);
     } catch (NGT::Exception &err) {
-      cerr << "ngt: Error " << err.what() << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"ngt: Error " << err.what() << endl;
+      CERR <<  " " <<usage << endl;
     } catch (...) {
-      cerr << "ngt: Error" << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"ngt: Error" << endl;
+      CERR <<  " " <<usage << endl;
     }
   }
 
@@ -390,12 +390,12 @@ using namespace std;
 	  try {
 	    node = graph.getNode(id);
 	  } catch(NGT::Exception &err) {
-	    cerr << "Graph::search: Warning. Cannot get the node. ID=" << id << ":" << err.what() << " If the node was removed, no problem." << endl;
+	    CERR <<  " " <<"Graph::search: Warning. Cannot get the node. ID=" << id << ":" << err.what() << " If the node was removed, no problem." << endl;
 	    continue;
 	  }
 	  numberOfNodes++;
 	  if (numberOfNodes % 1000000 == 0) {
-	    cerr << "Processed " << numberOfNodes << endl;
+	    CERR <<  " " <<"Processed " << numberOfNodes << endl;
 	  }
 	  for (size_t i = 0; i < node->size(); i++) {
 	    if (esize != 0 && i >= esize) {
@@ -432,18 +432,18 @@ using namespace std;
     try {
       database = args.get("#1");
     } catch (...) {
-      cerr << "ngt: Error: DB is not specified" << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"ngt: Error: DB is not specified" << endl;
+      CERR <<  " " <<usage << endl;
       return;
     }
 
     SearchParameters searchParameters(args);
 
     if (debugLevel >= 1) {
-      cerr << "indexType=" << searchParameters.indexType << endl;
-      cerr << "size=" << searchParameters.size << endl;
-      cerr << "edgeSize=" << searchParameters.edgeSize << endl;
-      cerr << "epsilon=" << searchParameters.beginOfEpsilon << "<->" << searchParameters.endOfEpsilon << ","
+      CERR <<  " " <<"indexType=" << searchParameters.indexType << endl;
+      CERR <<  " " <<"size=" << searchParameters.size << endl;
+      CERR <<  " " <<"edgeSize=" << searchParameters.edgeSize << endl;
+      CERR <<  " " <<"epsilon=" << searchParameters.beginOfEpsilon << "<->" << searchParameters.endOfEpsilon << ","
 	   << searchParameters.stepOfEpsilon << endl;
     }
 
@@ -451,11 +451,11 @@ using namespace std;
       NGT::Index	index(database, searchParameters.openMode == 'r');
       search(index, searchParameters, cout);
     } catch (NGT::Exception &err) {
-      cerr << "ngt: Error " << err.what() << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"ngt: Error " << err.what() << endl;
+      CERR <<  " " <<usage << endl;
     } catch (...) {
-      cerr << "ngt: Error" << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"ngt: Error" << endl;
+      CERR <<  " " <<usage << endl;
     }
 
   }
@@ -469,15 +469,15 @@ using namespace std;
     try {
       database = args.get("#1");
     } catch (...) {
-      cerr << "ngt: Error: DB is not specified" << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"ngt: Error: DB is not specified" << endl;
+      CERR <<  " " <<usage << endl;
       return;
     }
     try {
       args.get("#2");
     } catch (...) {
-      cerr << "ngt: Error: ID is not specified" << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"ngt: Error: ID is not specified" << endl;
+      CERR <<  " " <<usage << endl;
       return;
     }
     char dataType = args.getChar("d", 'f');
@@ -487,7 +487,7 @@ using namespace std;
       force = true;
     }
     if (debugLevel >= 1) {
-      cerr << "dataType=" << dataType << endl;
+      CERR <<  " " <<"dataType=" << dataType << endl;
     }
 
     try {
@@ -497,14 +497,14 @@ using namespace std;
 	try {
 	  ids = args.get("#2");
 	} catch (...) {
-	  cerr << "ngt: Error: Data file is not specified" << endl;
-	  cerr << usage << endl;
+	  CERR <<  " " <<"ngt: Error: Data file is not specified" << endl;
+	  CERR <<  " " <<usage << endl;
 	  return;
 	}
 	ifstream is(ids);
 	if (!is) {
-	  cerr << "ngt: Error: Cannot open the specified file. " << ids << endl;
-	  cerr << usage << endl;
+	  CERR <<  " " <<"ngt: Error: Cannot open the specified file. " << ids << endl;
+	  CERR <<  " " <<usage << endl;
 	  return;
 	}
 	string line;
@@ -522,25 +522,25 @@ using namespace std;
 	    id = strtol(tokens[0].c_str(), &e, 10);
 	    objects.push_back(id);
 	  } catch (...) {
-	    cerr << "Illegal data. " << tokens[0] << endl;
+	    CERR <<  " " <<"Illegal data. " << tokens[0] << endl;
 	  }
 	  if (*e != 0) {
-	    cerr << "Illegal data. " << e << endl;
+	    CERR <<  " " <<"Illegal data. " << e << endl;
 	  }
-	  cerr << "removed ID=" << id << endl;
+	  CERR <<  " " <<"removed ID=" << id << endl;
 	}
       } else {
 	size_t id = args.getl("#2", 0);
-	cerr << "removed ID=" << id << endl;
+	CERR <<  " " <<"removed ID=" << id << endl;
 	objects.push_back(id);
       }
       NGT::Index::remove(database, objects, force);
     } catch (NGT::Exception &err) {
-      cerr << "ngt: Error " << err.what() << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"ngt: Error " << err.what() << endl;
+      CERR <<  " " <<usage << endl;
     } catch (...) {
-      cerr << "ngt: Error" << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"ngt: Error" << endl;
+      CERR <<  " " <<usage << endl;
     }
   }
 
@@ -552,26 +552,26 @@ using namespace std;
     try {
       database = args.get("#1");
     } catch (...) {
-      cerr << "ngt: Error: DB is not specified" << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"ngt: Error: DB is not specified" << endl;
+      CERR <<  " " <<usage << endl;
       return;
     }
     string exportFile;
     try {
       exportFile = args.get("#2");
     } catch (...) {
-      cerr << "ngt: Error: ID is not specified" << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"ngt: Error: ID is not specified" << endl;
+      CERR <<  " " <<usage << endl;
       return;
     }
     try {
       NGT::Index::exportIndex(database, exportFile);
     } catch (NGT::Exception &err) {
-      cerr << "ngt: Error " << err.what() << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"ngt: Error " << err.what() << endl;
+      CERR <<  " " <<usage << endl;
     } catch (...) {
-      cerr << "ngt: Error" << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"ngt: Error" << endl;
+      CERR <<  " " <<usage << endl;
     }
   }
 
@@ -583,27 +583,27 @@ using namespace std;
     try {
       database = args.get("#1");
     } catch (...) {
-      cerr << "ngt: Error: DB is not specified" << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"ngt: Error: DB is not specified" << endl;
+      CERR <<  " " <<usage << endl;
       return;
     }
     string importFile;
     try {
       importFile = args.get("#2");
     } catch (...) {
-      cerr << "ngt: Error: ID is not specified" << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"ngt: Error: ID is not specified" << endl;
+      CERR <<  " " <<usage << endl;
       return;
     }
 
     try {
       NGT::Index::importIndex(database, importFile);
     } catch (NGT::Exception &err) {
-      cerr << "ngt: Error " << err.what() << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"ngt: Error " << err.what() << endl;
+      CERR <<  " " <<usage << endl;
     } catch (...) {
-      cerr << "ngt: Error" << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"ngt: Error" << endl;
+      CERR <<  " " <<usage << endl;
     }
 
   }
@@ -616,8 +616,8 @@ using namespace std;
     try {
       indexName = args.get("#1");
     } catch (...) {
-      cerr << "Index is not specified" << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"Index is not specified" << endl;
+      CERR <<  " " <<usage << endl;
       return;
     }
 
@@ -626,23 +626,23 @@ using namespace std;
     // the number of selectively pruned edges
     size_t selectivelyPrunedEdgeSize	= args.getl("s", 0);
 
-    cerr << "forcedly pruned edge size=" << forcedlyPrunedEdgeSize << endl;
-    cerr << "selectively pruned edge size=" << selectivelyPrunedEdgeSize << endl;
+    CERR <<  " " <<"forcedly pruned edge size=" << forcedlyPrunedEdgeSize << endl;
+    CERR <<  " " <<"selectively pruned edge size=" << selectivelyPrunedEdgeSize << endl;
 
     if (selectivelyPrunedEdgeSize == 0 && forcedlyPrunedEdgeSize == 0) {
-      cerr << "prune: Error! Either of selective edge size or remaining edge size should be specified." << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"prune: Error! Either of selective edge size or remaining edge size should be specified." << endl;
+      CERR <<  " " <<usage << endl;
       return;
     }
 
     if (forcedlyPrunedEdgeSize != 0 && selectivelyPrunedEdgeSize != 0 && selectivelyPrunedEdgeSize >= forcedlyPrunedEdgeSize) {
-      cerr << "prune: Error! selective edge size is less than remaining edge size." << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"prune: Error! selective edge size is less than remaining edge size." << endl;
+      CERR <<  " " <<usage << endl;
       return;
     }
 
     NGT::Index	index(indexName);
-    cerr << "loaded the input index." << endl;
+    CERR <<  " " <<"loaded the input index." << endl;
 
     NGT::GraphIndex	&graph = (NGT::GraphIndex&)index.getIndex();
 
@@ -650,7 +650,7 @@ using namespace std;
       try {
 	NGT::GraphNode &node = *graph.getNode(id);
 	if (id % 1000000 == 0) {
-	  cerr << "Processed " << id << endl;
+	  CERR <<  " " <<"Processed " << id << endl;
 	}
 	if (forcedlyPrunedEdgeSize > 0 && node.size() >= forcedlyPrunedEdgeSize) {
 #ifdef NGT_SHARED_MEMORY_ALLOCATOR
@@ -661,7 +661,7 @@ using namespace std;
 	}
 	if (selectivelyPrunedEdgeSize > 0 && node.size() >= selectivelyPrunedEdgeSize) {
 #ifdef NGT_SHARED_MEMORY_ALLOCATOR
-	  cerr << "not implemented" << endl;
+	  CERR <<  " " <<"not implemented" << endl;
 	  abort();
 #else
 	  size_t rank = 0;
@@ -698,7 +698,7 @@ using namespace std;
 	}
 	  
       } catch(NGT::Exception &err) {
-	cerr << "Graph::search: Warning. Cannot get the node. ID=" << id << ":" << err.what() << endl;
+	CERR <<  " " <<"Graph::search: Warning. Cannot get the node. ID=" << id << ":" << err.what() << endl;
 	continue;
       }
     }
@@ -725,16 +725,16 @@ using namespace std;
     try {
       inIndexPath = args.get("#1");
     } catch (...) {
-      cerr << "ngt::reconstructGraph: Input index is not specified." << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"ngt::reconstructGraph: Input index is not specified." << endl;
+      CERR <<  " " <<usage << endl;
       return;
     }
     string outIndexPath;
     try {
       outIndexPath = args.get("#2");
     } catch (...) {
-      cerr << "ngt::reconstructGraph: Output index is not specified." << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"ngt::reconstructGraph: Output index is not specified." << endl;
+      CERR <<  " " <<usage << endl;
       return;
     }
 
@@ -755,7 +755,7 @@ using namespace std;
     if (mode == 'P') {
       numOfOutgoingEdges = 0;
       numOfIncomingEdges = 0;
-      std::cerr << "ngt::reconstructGraph: Warning. \'-m P\' and not zero for # of in/out edges are specified at the same time." << std::endl;
+      CERR   << "ngt::reconstructGraph: Warning. \'-m P\' and not zero for # of in/out edges are specified at the same time." << std::endl;
     }
     graphOptimizer.shortcutReduction = (mode == 'S' || mode == 'C' || mode == 'P') ? true : false;
     graphOptimizer.searchParameterOptimization = (smode == '-' || smode == 's') ? true : false;
@@ -784,8 +784,8 @@ using namespace std;
     try {
       indexPath = args.get("#1");
     } catch (...) {
-      cerr << "Index is not specified" << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"Index is not specified" << endl;
+      CERR <<  " " <<usage << endl;
       return;
     }
 
@@ -809,8 +809,8 @@ using namespace std;
 
       std::cout << "Successfully completed." << std::endl;
     } catch (NGT::Exception &err) {
-      cerr << "ngt: Error " << err.what() << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"ngt: Error " << err.what() << endl;
+      CERR <<  " " <<usage << endl;
     }
 
   }
@@ -819,7 +819,7 @@ using namespace std;
   NGT::Command::refineANNG(Args &args)
   {
 #if defined(NGT_SHARED_MEMORY_ALLOCATOR)
-    std::cerr << "refineANNG. Not implemented." << std::endl;
+    CERR   << "refineANNG. Not implemented." << std::endl;
     abort();
 #else
     const string usage = "Usage: ngt refine-anng [-e epsilon] [-a expected-accuracy] anng-index refined-anng-index";
@@ -828,8 +828,8 @@ using namespace std;
     try {
       inIndexPath = args.get("#1");
     } catch (...) {
-      cerr << "Input index is not specified" << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"Input index is not specified" << endl;
+      CERR <<  " " <<usage << endl;
       return;
     }
 
@@ -837,8 +837,8 @@ using namespace std;
     try {
       outIndexPath = args.get("#2");
     } catch (...) {
-      cerr << "Output index is not specified" << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"Output index is not specified" << endl;
+      CERR <<  " " <<usage << endl;
       return;
     }
 
@@ -853,7 +853,7 @@ using namespace std;
     try {
       GraphReconstructor::refineANNG(index, epsilon, expectedAccuracy, noOfEdges, exploreEdgeSize, batchSize);
     } catch (NGT::Exception &err) {
-      std::cerr << "Error!! Cannot refine the index. " << err.what() << std::endl;
+      CERR   << "Error!! Cannot refine the index. " << err.what() << std::endl;
       return;
     }
     index.saveIndex(outIndexPath);
@@ -873,8 +873,8 @@ using namespace std;
     try {
       indexPath = args.get("#1");
     } catch (...) {
-      cerr << "Index is not specified" << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"Index is not specified" << endl;
+      CERR <<  " " <<usage << endl;
       return;
     }
     
@@ -890,8 +890,8 @@ using namespace std;
       const string com = "cp -r " + indexPath + " " + path;
       int stat = system(com.c_str());
       if (stat != 0) {
-	std::cerr << "ngt::repair: Cannot create the specified index. " << path << std::endl;
-	cerr << usage << endl;
+	CERR   << "ngt::repair: Cannot create the specified index. " << path << std::endl;
+	CERR <<  " " <<usage << endl;
 	return;
       }
     }
@@ -902,7 +902,7 @@ using namespace std;
     NGT::GraphIndex &graphIndex = static_cast<GraphIndex&>(index.getIndex());
     NGT::GraphAndTreeIndex &graphAndTreeIndex = static_cast<GraphAndTreeIndex&>(index.getIndex());
     size_t objSize = objectRepository.size();
-    std::cerr << "aggregate removed objects from the repository." << std::endl;
+    CERR   << "aggregate removed objects from the repository." << std::endl;
     std::set<ObjectID> removedIDs;
     for (ObjectID id = 1; id < objSize; id++) {
       if (objectRepository.isEmpty(id)) {
@@ -910,31 +910,31 @@ using namespace std;
       }
     }
 
-    std::cerr << "aggregate objects from the tree." << std::endl;
+    CERR   << "aggregate objects from the tree." << std::endl;
     std::set<ObjectID> ids;
     graphAndTreeIndex.DVPTree::getAllObjectIDs(ids);
     size_t idsSize = ids.size() == 0 ? 0 : (*ids.rbegin()) + 1;
     if (objSize < idsSize) {
-      std::cerr << "The sizes of the repository and tree are inconsistent. " << objSize << ":" << idsSize << std::endl;
+      CERR   << "The sizes of the repository and tree are inconsistent. " << objSize << ":" << idsSize << std::endl;
     }
     size_t invalidTreeObjectCount = 0;
     size_t uninsertedTreeObjectCount = 0;
-    std::cerr << "remove invalid objects from the tree." << std::endl;
+    CERR   << "remove invalid objects from the tree." << std::endl;
     size_t size = objSize > idsSize ? objSize : idsSize;
     for (size_t id = 1; id < size; id++) {
       if (ids.find(id) != ids.end()) {
 	if (removedIDs.find(id) != removedIDs.end() || id >= objSize) {
 	  if (repair) {
 	    graphAndTreeIndex.DVPTree::removeNaively(id);
-	    std::cerr << "Found the removed object in the tree. Removed it from the tree. " << id << std::endl;
+	    CERR   << "Found the removed object in the tree. Removed it from the tree. " << id << std::endl;
 	  } else {
-	    std::cerr << "Found the removed object in the tree. " << id << std::endl;
+	    CERR   << "Found the removed object in the tree. " << id << std::endl;
 	  }
 	  invalidTreeObjectCount++;
 	}
       } else {
 	if (removedIDs.find(id) == removedIDs.end() && id < objSize) {
-          std::cerr << "Not found an object in the tree. However, it might be a duplicated object. " << id << std::endl;
+          CERR   << "Not found an object in the tree. However, it might be a duplicated object. " << id << std::endl;
 	  uninsertedTreeObjectCount++;
 	  if (repair) {
 	    try {
@@ -946,12 +946,12 @@ using namespace std;
     }
 
     if (objSize != graphIndex.repository.size()) {
-      std::cerr << "The sizes of the repository and graph are inconsistent. " << objSize << ":" << graphIndex.repository.size() << std::endl;
+      CERR   << "The sizes of the repository and graph are inconsistent. " << objSize << ":" << graphIndex.repository.size() << std::endl;
     }
     size_t invalidGraphObjectCount = 0;
     size_t uninsertedGraphObjectCount = 0;
     size = objSize > graphIndex.repository.size() ? objSize : graphIndex.repository.size();
-    std::cerr << "remove invalid objects from the graph." << std::endl;
+    CERR   << "remove invalid objects from the graph." << std::endl;
     for (size_t id = 1; id < size; id++) {
       try {
 	graphIndex.getNode(id);
@@ -961,15 +961,15 @@ using namespace std;
 	    try {
 	      graphIndex.repository.remove(id);
 	    } catch(...) {}
-	    std::cerr << "Found the removed object in the graph. Removed it from the graph. " << id << std::endl;
+	    CERR   << "Found the removed object in the graph. Removed it from the graph. " << id << std::endl;
 	  } else {
-	    std::cerr << "Found the removed object in the graph. " << id << std::endl;
+	    CERR   << "Found the removed object in the graph. " << id << std::endl;
 	  }
 	  invalidGraphObjectCount++;
 	}
       } catch(NGT::Exception &err) {
         if (removedIDs.find(id) == removedIDs.end() && id < objSize) {
-          std::cerr << "Not found an object in the graph. It should be inserted into the graph. " << err.what() << " ID=" << id << std::endl;
+          CERR   << "Not found an object in the graph. It should be inserted into the graph. " << err.what() << " ID=" << id << std::endl;
 	  uninsertedGraphObjectCount++;
 	  if (repair) {
 	    try {
@@ -978,7 +978,7 @@ using namespace std;
 	  }
 	}
       } catch(...) {
-	std::cerr << "Unexpected error!" << std::endl;
+	CERR   << "Unexpected error!" << std::endl;
       }
     }
 
@@ -994,7 +994,7 @@ using namespace std;
 #endif
 	  if (removedIDs.find((*n).id) != removedIDs.end() || (*n).id >= objSize) {
 
-	    std::cerr << "Not found the destination object of the edge. " << id << ":" << (*n).id << std::endl;
+	    CERR   << "Not found the destination object of the edge. " << id << ":" << (*n).id << std::endl;
 	    invalidEdgeCount++;
             if (repair) {
 #if defined(NGT_SHARED_MEMORY_ALLOCATOR)
@@ -1016,23 +1016,23 @@ using namespace std;
       }
     }
 
-    std::cerr << "The number of invalid tree objects=" << invalidTreeObjectCount << std::endl;
-    std::cerr << "The number of invalid graph objects=" << invalidGraphObjectCount << std::endl;
-    std::cerr << "The number of uninserted tree objects (Can be ignored)=" << uninsertedTreeObjectCount << std::endl;
-    std::cerr << "The number of uninserted graph objects=" << uninsertedGraphObjectCount << std::endl;
-    std::cerr << "The number of invalid edges=" << invalidEdgeCount << std::endl;
+    CERR   << "The number of invalid tree objects=" << invalidTreeObjectCount << std::endl;
+    CERR   << "The number of invalid graph objects=" << invalidGraphObjectCount << std::endl;
+    CERR   << "The number of uninserted tree objects (Can be ignored)=" << uninsertedTreeObjectCount << std::endl;
+    CERR   << "The number of uninserted graph objects=" << uninsertedGraphObjectCount << std::endl;
+    CERR   << "The number of invalid edges=" << invalidEdgeCount << std::endl;
 
     if (repair) {
       try {
 	if (uninsertedGraphObjectCount > 0) {
-	  std::cerr << "Building index." << std::endl;
+	  CERR   << "Building index." << std::endl;
 	  index.createIndex(16);
 	}
-	std::cerr << "Saving index." << std::endl;
+	CERR   << "Saving index." << std::endl;
 	index.saveIndex(path);
       } catch (NGT::Exception &err) {
-	cerr << "ngt: Error " << err.what() << endl;
-	cerr << usage << endl;
+	CERR <<  " " <<"ngt: Error " << err.what() << endl;
+	CERR <<  " " <<usage << endl;
 	return;
       }
     }
@@ -1050,8 +1050,8 @@ using namespace std;
     try {
       indexPath = args.get("#1");
     } catch (...) {
-      cerr << "Index is not specified" << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"Index is not specified" << endl;
+      CERR <<  " " <<usage << endl;
       return;
     }
 
@@ -1086,8 +1086,8 @@ using namespace std;
     try {
       database = args.get("#1");
     } catch (...) {
-      cerr << "ngt: Error: DB is not specified" << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"ngt: Error: DB is not specified" << endl;
+      CERR <<  " " <<usage << endl;
       return;
     }
 
@@ -1102,18 +1102,18 @@ using namespace std;
 	index.verify(status);
       }
     } catch (NGT::Exception &err) {
-      cerr << "ngt: Error " << err.what() << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"ngt: Error " << err.what() << endl;
+      CERR <<  " " <<usage << endl;
     } catch (...) {
-      cerr << "ngt: Error" << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"ngt: Error" << endl;
+      CERR <<  " " <<usage << endl;
     }
   }
 
 
   void NGT::Command::exportGraph(Args &args) {
 #if defined(NGT_SHARED_MEMORY_ALLOCATOR)
-    std::cerr << "ngt: Error: exportGraph is not implemented." << std::endl;
+    CERR   << "ngt: Error: exportGraph is not implemented." << std::endl;
     abort();
 #else
     std::string usage = "ngt export-graph [-k #-of-edges] index";
@@ -1121,8 +1121,8 @@ using namespace std;
     try {
       indexPath = args.get("#1");
     } catch (...) {
-      cerr << "ngt::exportGraph: Index is not specified." << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"ngt::exportGraph: Index is not specified." << endl;
+      CERR <<  " " <<usage << endl;
       return;
     }
 
@@ -1157,7 +1157,7 @@ using namespace std;
 
   void NGT::Command::exportObjects(Args &args) {
 #if defined(NGT_SHARED_MEMORY_ALLOCATOR)
-    std::cerr << "ngt: Error: exportObjects is not implemented." << std::endl;
+    CERR   << "ngt: Error: exportObjects is not implemented." << std::endl;
     abort();
 #else
     std::string usage = "ngt export-objects index";
@@ -1165,8 +1165,8 @@ using namespace std;
     try {
       indexPath = args.get("#1");
     } catch (...) {
-      cerr << "ngt::exportGraph: Index is not specified." << endl;
-      cerr << usage << endl;
+      CERR <<  " " <<"ngt::exportGraph: Index is not specified." << endl;
+      CERR <<  " " <<usage << endl;
       return;
     }
 

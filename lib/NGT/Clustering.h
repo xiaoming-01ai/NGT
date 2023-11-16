@@ -301,7 +301,7 @@ namespace NGT {
       subtract(std::vector<float> &a, std::vector<float> &b) {
       if (a.size() != b.size()) {
 	std::stringstream msg;
-	std::cerr << "Clustering::subtract: Mismatched dimensions. " << a.size() << "x" << b.size();
+	CERR <<  " "  << "Clustering::subtract: Mismatched dimensions. " << a.size() << "x" << b.size();
 	NGTThrowException(msg);
       }
       auto bit = b.begin();
@@ -418,8 +418,8 @@ namespace NGT {
 	    }
 	  }
 	  if (mincidx == -1) {
-	    std::cerr << "Clustering: Fatal error " << clusters.size() << std::endl;
-	    std::cerr << vi << "/" << vectors.size() << std::endl;
+	    CERR <<  " "  << "Clustering: Fatal error " << clusters.size() << std::endl;
+	    CERR <<  " "  << vi << "/" << vectors.size() << std::endl;
 	    abort();
 	  }
 	  sortedObjects[vi] = Entry(vi + nOfVectors, mincidx, mind);
@@ -437,7 +437,7 @@ namespace NGT {
       for (auto soi = sortedObjects.rbegin(); soi != sortedObjects.rend();) {
 	Entry &entry = *soi;
         if (entry.centroidID >= clusters.size()) {
-	  std::cerr << "Something wrong. (2) " << entry.centroidID << ":" << clusters.size() << std::endl;
+	  CERR <<  " "  << "Something wrong. (2) " << entry.centroidID << ":" << clusters.size() << std::endl;
 	  soi++;
 	  continue;
 	}
@@ -791,7 +791,7 @@ namespace NGT {
 	std::vector<Cluster> prevClusters = clusters;
 	diff = calculateCentroid(vectors, clusters);
 	if (prevDiff == diff) {
-	  std::cerr << "epsilon=" << epsilon << "->" << epsilon * 1.1 << std::endl;
+	  CERR <<  " "  << "epsilon=" << epsilon << "->" << epsilon * 1.1 << std::endl;
 	  epsilon *= 1.1;
 	}
 	diffHistory.push_back(diff);
@@ -932,7 +932,7 @@ namespace NGT {
 	}
       }
       if (vectors.size() != count) {
-	std::cerr << "Warning! vectors.size() != count" << std::endl;
+	CERR <<  " "  << "Warning! vectors.size() != count" << std::endl;
       }
 
       return d / (double)vectors.size();

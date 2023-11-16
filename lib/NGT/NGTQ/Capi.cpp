@@ -34,11 +34,11 @@ static bool operate_error_string_(const std::stringstream &ss, NGTError error){
       std::string *error_str = static_cast<std::string*>(error);
       *error_str = ss.str();
     }catch(std::exception &err){
-      std::cerr << ss.str() << " > " << err.what() << std::endl;
+      CERR <<  " "  << ss.str() << " > " << err.what() << std::endl;
       return false;
     }
   }else{
-    std::cerr << ss.str() << std::endl;
+    CERR <<  " "  << ss.str() << std::endl;
   }
   return true;
 }

@@ -10,8 +10,8 @@
 using namespace std;
 
 void help() {
-  cerr << "Usage : jaccard-sparse command index [data]" << endl;
-  cerr << "           command : info create search append" << endl;
+  CERR <<  " " <<"Usage : jaccard-sparse command index [data]" << endl;
+  CERR <<  " " <<"           command : info create search append" << endl;
 }
 
 void
@@ -23,15 +23,15 @@ append(NGT::Args &args)
   try {
     database = args.get("#1");
   } catch (...) {
-    cerr << "jaccard-sparse: Error: DB is not specified." << endl;
-    cerr << usage << endl;
+    CERR <<  " " <<"jaccard-sparse: Error: DB is not specified." << endl;
+    CERR <<  " " <<usage << endl;
     return;
   }
   string data;
   try {
     data = args.get("#2");
   } catch (...) {
-    cerr << "jaccard-sparse: Warning: No specified object file. Just build an index for the existing objects." << endl;
+    CERR <<  " " <<"jaccard-sparse: Warning: No specified object file. Just build an index for the existing objects." << endl;
   }
 
   int threadSize = args.getl("p", 50);
@@ -48,7 +48,7 @@ append(NGT::Args &args)
       ifs = new std::ifstream;
       ifs->std::ifstream::open(data);
       if (!(*ifs)) {
-	cerr << "Cannot open the specified data file. " << data << endl;
+	CERR <<  " " <<"Cannot open the specified data file. " << data << endl;
 	return;
       }
       is = ifs;
@@ -72,7 +72,7 @@ append(NGT::Args &args)
 	object.push_back(value);
       }
       if (object.empty()) {
-	std::cerr << "jaccard-sparse: Empty line or invalid value. " << count << ":" << line << std::endl;
+	CERR   << "jaccard-sparse: Empty line or invalid value. " << count << ":" << line << std::endl;
 	continue;
       }
     }
@@ -85,8 +85,8 @@ append(NGT::Args &args)
     if (data != "-") {
       delete ifs;
     }
-    cerr << "jaccard-sparse: Error " << err.what() << endl;
-    cerr << usage << endl;
+    CERR <<  " " <<"jaccard-sparse: Error " << err.what() << endl;
+    CERR <<  " " <<usage << endl;
   }
   return;
 }
@@ -98,7 +98,7 @@ search(NGT::Index &index, NGT::Command::SearchParameters &searchParameters, ostr
 
   std::ifstream		is(searchParameters.query);
   if (!is) {
-    std::cerr << "Cannot open the specified file. " << searchParameters.query << std::endl;
+    CERR   << "Cannot open the specified file. " << searchParameters.query << std::endl;
     return;
   }
 
@@ -189,8 +189,8 @@ search(NGT::Args &args) {
   try {
     database = args.get("#1");
   } catch (...) {
-    cerr << "jaccard-sparse: Error: DB is not specified" << endl;
-    cerr << usage << endl;
+    CERR <<  " " <<"jaccard-sparse: Error: DB is not specified" << endl;
+    CERR <<  " " <<usage << endl;
     return;
   }
 
@@ -200,11 +200,11 @@ search(NGT::Args &args) {
     NGT::Index	index(database, searchParameters.openMode == 'r');
     search(index, searchParameters, cout);
   } catch (NGT::Exception &err) {
-    cerr << "jaccard-sparse: Error " << err.what() << endl;
-    cerr << usage << endl;
+    CERR <<  " " <<"jaccard-sparse: Error " << err.what() << endl;
+    CERR <<  " " <<usage << endl;
   } catch (...) {
-    cerr << "jaccard-sparse: Error" << endl;
-    cerr << usage << endl;
+    CERR <<  " " <<"jaccard-sparse: Error" << endl;
+    CERR <<  " " <<usage << endl;
   }
 
 }
@@ -233,11 +233,11 @@ main(int argc, char **argv)
     } else if (command == "search") {
       search(args);
     } else {
-      cerr << "jaccard-sparse: Error: Illegal command. " << command << endl;
+      CERR <<  " " <<"jaccard-sparse: Error: Illegal command. " << command << endl;
       help();
     }
   } catch(NGT::Exception &err) {
-    cerr << "jaccard-sparse: Error: " << err.what() << endl;
+    CERR <<  " " <<"jaccard-sparse: Error: " << err.what() << endl;
     help();
     return 0;
   }

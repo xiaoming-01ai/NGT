@@ -15,6 +15,7 @@
 //
 
 #include "ArrayFile.h"
+#include "Common.h"
 #include <iostream>
 #include <assert.h>
 
@@ -46,7 +47,7 @@ sampleForUsage() {
     itemIDFile.put(id, itemID);
     itemID.value = 0;
     itemIDFile.get(id, itemID);
-    std::cerr << "value=" << itemID.value << std::endl;
+    CERR <<  " "  << "value=" << itemID.value << std::endl;
     assert(itemID.value == 4910002490100);
 
     id = 2;
@@ -54,14 +55,14 @@ sampleForUsage() {
     itemIDFile.put(id, itemID);
     itemID.value = 0;
     itemIDFile.get(id, itemID);
-    std::cerr << "value=" << itemID.value << std::endl;
+    CERR <<  " "  << "value=" << itemID.value << std::endl;
     assert(itemID.value == 4910002490101);
 
     itemID.value = 4910002490102;
     id = itemIDFile.insert(itemID);
     itemID.value = 0;
     itemIDFile.get(id, itemID);
-    std::cerr << "value=" << itemID.value << std::endl;
+    CERR <<  " "  << "value=" << itemID.value << std::endl;
     assert(itemID.value == 4910002490102);
 
     itemIDFile.close();
@@ -75,12 +76,12 @@ sampleForUsage() {
 
     id = 10;
     itemIDFile.get(id, itemID);
-    std::cerr << "value=" << itemID.value << std::endl;
+    CERR <<  " "  << "value=" << itemID.value << std::endl;
     assert(itemID.value == 4910002490100);
 
     id = 20;
     itemIDFile.get(id, itemID);
-    std::cerr << "value=" << itemID.value << std::endl;
+    CERR <<  " "  << "value=" << itemID.value << std::endl;
     assert(itemID.value == 4910002490101);
   }
 

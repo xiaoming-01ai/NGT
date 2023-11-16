@@ -86,29 +86,29 @@ namespace NGT {
     }
 
     virtual PersistentObject *allocateNormalizedPersistentObject(const std::vector<double> &obj) {
-      std::cerr << "ObjectRepository::allocateNormalizedPersistentObject(double): Fatal error! Something wrong!" << std::endl;
+      CERR <<  " "  << "ObjectRepository::allocateNormalizedPersistentObject(double): Fatal error! Something wrong!" << std::endl;
       abort();
     }
 
     virtual PersistentObject *allocateNormalizedPersistentObject(const std::vector<float> &obj) {
-      std::cerr << "ObjectRepository::allocateNormalizedPersistentObject(float): Fatal error! Something wrong!" << std::endl;
+      CERR <<  " "  << "ObjectRepository::allocateNormalizedPersistentObject(float): Fatal error! Something wrong!" << std::endl;
       abort();
     }
 
 #ifdef NGT_HALF_FLOAT
     virtual PersistentObject *allocateNormalizedPersistentObject(const std::vector<float16> &obj) {
-      std::cerr << "ObjectRepository::allocateNormalizedPersistentObject(float): Fatal error! Something wrong!" << std::endl;
+      CERR <<  " "  << "ObjectRepository::allocateNormalizedPersistentObject(float): Fatal error! Something wrong!" << std::endl;
       abort();
     }
 #endif
 
     virtual PersistentObject *allocateNormalizedPersistentObject(const std::vector<uint8_t> &obj) {
-      std::cerr << "ObjectRepository::allocateNormalizedPersistentObject(uint8_t): Fatal error! Something wrong!" << std::endl;
+      CERR <<  " "  << "ObjectRepository::allocateNormalizedPersistentObject(uint8_t): Fatal error! Something wrong!" << std::endl;
       abort();
     }
 
     virtual PersistentObject *allocateNormalizedPersistentObject(const float *obj, size_t size) {
-      std::cerr << "ObjectRepository::allocateNormalizedPersistentObject: Fatal error! Something wrong!" << std::endl;
+      CERR <<  " "  << "ObjectRepository::allocateNormalizedPersistentObject: Fatal error! Something wrong!" << std::endl;
       abort();
     }
 
@@ -130,7 +130,7 @@ namespace NGT {
       while (getline(is, line)) {
 	lineNo++;
 	if (dataSize > 0 && (dataSize <= size() - prevDataSize)) {
-	  std::cerr << "The size of data reached the specified size. The remaining data in the file are not inserted. "
+	  CERR <<  " "  << "The size of data reached the specified size. The remaining data in the file are not inserted. "
 	       << dataSize << std::endl;
 	  break;
 	}
@@ -141,12 +141,12 @@ namespace NGT {
 	  try {
 	    obj = allocateNormalizedPersistentObject(object);
 	  } catch (Exception &err) {
-	    std::cerr << err.what() << " continue..." << std::endl;
+	    CERR <<  " "  << err.what() << " continue..." << std::endl;
 	    obj = allocatePersistentObject(object);
 	  }
 	  push_back(obj);
 	} catch (Exception &err) {
-	  std::cerr << "ObjectSpace::readText: Warning! Invalid line. [" << line << "] Skip the line " << lineNo << " and continue." << std::endl;
+	  CERR <<  " "  << "ObjectSpace::readText: Warning! Invalid line. [" << line << "] Skip the line " << lineNo << " and continue." << std::endl;
 	}
       }
     }
@@ -175,13 +175,13 @@ namespace NGT {
 	  try {
 	    obj = allocateNormalizedPersistentObject(object);
 	  } catch (Exception &err) {
-	    std::cerr << err.what() << " continue..." << std::endl;
+	    CERR <<  " "  << err.what() << " continue..." << std::endl;
 	    obj = allocatePersistentObject(object);
 	  }
 	  push_back(obj);
 
 	} catch (Exception &err) {
-	  std::cerr << "ObjectSpace::readText: Warning! Invalid data. Skip the data no. " << idx << " and continue." << std::endl;
+	  CERR <<  " "  << "ObjectSpace::readText: Warning! Invalid data. Skip the data no. " << idx << " and continue." << std::endl;
 	}
       }
     }
@@ -221,7 +221,7 @@ namespace NGT {
 	char *e;
 	object[idx] = static_cast<T>(strtod(tokens[idx].c_str(), &e));
 	if (*e != 0) {
-	  std::cerr << "ObjectSpace::readText: Warning! Not numerical value. [" << e << "]" << std::endl;
+	  CERR <<  " "  << "ObjectSpace::readText: Warning! Not numerical value. [" << e << "]" << std::endl;
 	  break;
 	}
       }
@@ -261,7 +261,7 @@ namespace NGT {
 	}
 #endif
       } else {
-	std::cerr << "ObjectSpace::allocateObject: Fatal error: unsupported type!" << std::endl;
+	CERR <<  " "  << "ObjectSpace::allocateObject: Fatal error: unsupported type!" << std::endl;
 	abort();
       }
       return po;
@@ -285,7 +285,7 @@ namespace NGT {
 	cpsize *= sizeof(float16);
 #endif
       } else {
-	std::cerr << "ObjectSpace::allocatePersistentObject: Fatal error: unsupported type!" << std::endl;
+	CERR <<  " "  << "ObjectSpace::allocatePersistentObject: Fatal error: unsupported type!" << std::endl;
 	abort();
       }
       PersistentObject *po = new (objectAllocator) PersistentObject(objectAllocator, paddedByteSize);
@@ -324,7 +324,7 @@ namespace NGT {
 	}
 #endif
       } else {
-	std::cerr << "ObjectSpace::allocatePersistentObject: Fatal error: unsupported type!" << std::endl;
+	CERR <<  " "  << "ObjectSpace::allocatePersistentObject: Fatal error: unsupported type!" << std::endl;
 	abort();
       }
       return po;
@@ -377,7 +377,7 @@ namespace NGT {
 	}
 #endif
       } else {
-	std::cerr << "ObjectSpace::allocate: Fatal error: unsupported type!" << std::endl;
+	CERR <<  " "  << "ObjectSpace::allocate: Fatal error: unsupported type!" << std::endl;
 	abort();
       }
     }

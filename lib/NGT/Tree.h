@@ -343,7 +343,7 @@ namespace NGT {
 	} else if (cnode->id.getType() == Node::ID::Leaf) {
 	  leafIDs.push_back(static_cast<LeafNode&>(*cnode).id);
 	} else {
-	  std::cerr << "Tree: Inner fatal error!: Node type error!" << std::endl;
+	  CERR <<  " "  << "Tree: Inner fatal error!: Node type error!" << std::endl;
 	  abort();
 	}
       }
@@ -386,7 +386,7 @@ namespace NGT {
     }
 
     bool verify(size_t objCount, std::vector<uint8_t> &status) {
-      std::cerr << "Started verifying internal nodes. size=" << internalNodes.size() << "..." << std::endl;
+      CERR <<  " "  << "Started verifying internal nodes. size=" << internalNodes.size() << "..." << std::endl;
       bool valid = true;
       for (size_t i = 0; i < internalNodes.size(); i++) {
 	if (internalNodes[i] != 0) {
@@ -397,7 +397,7 @@ namespace NGT {
 #endif
 	}
       }
-      std::cerr << "Started verifying leaf nodes. size=" << leafNodes.size() << " ..." << std::endl;
+      CERR <<  " "  << "Started verifying leaf nodes. size=" << leafNodes.size() << " ..." << std::endl;
       for (size_t i = 0; i < leafNodes.size(); i++) {
 	if (leafNodes[i] != 0) {
 #ifdef NGT_SHARED_MEMORY_ALLOCATOR

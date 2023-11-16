@@ -76,7 +76,7 @@ void QBG::HierarchicalKmeans::treeBasedTopdownClustering(std::string prefix, QBG
   for (size_t id = 1; id <= numOfObjects; id++) {
     if (id % (numOfObjects / 100) == 0) {
       timer.stop();
-      std::cerr << "# of processed objects=" << id << " " << id * 100 / numOfObjects << "% " << timer << " # of leaves=" << nleaves << std::endl;
+      CERR <<  " "  << "# of processed objects=" << id << " " << id * 100 / numOfObjects << "% " << timer << " # of leaves=" << nleaves << std::endl;
       timer.start();
     }
     batch.push_back(id);
@@ -99,9 +99,9 @@ void QBG::HierarchicalKmeans::treeBasedTopdownClustering(std::string prefix, QBG
 	numOfLeaves++;
       }
     }
-    std::cerr << "# of nodes=" << nodes.size() << std::endl;
-    std::cerr << "# of leaves=" << numOfLeaves << std::endl;
-    std::cerr << "clustering for quantization." << std::endl;
+    CERR <<  " "  << "# of nodes=" << nodes.size() << std::endl;
+    CERR <<  " "  << "# of leaves=" << numOfLeaves << std::endl;
+    CERR <<  " "  << "clustering for quantization." << std::endl;
     hierarchicalKmeansWithNumberOfClustersInParallel(numOfTotalClusters, numOfObjects, numOfLeaves,
 						     objectList, objectSpace, nodes, initMode);
     if (numOfTotalBlobs != 0) {
@@ -113,9 +113,9 @@ void QBG::HierarchicalKmeans::treeBasedTopdownClustering(std::string prefix, QBG
 	  numOfLeaves++;
 	}
       }
-      std::cerr << "# of leaves=" << numOfLeaves << ":" << numOfTotalClusters << std::endl;
+      CERR <<  " "  << "# of leaves=" << numOfLeaves << ":" << numOfTotalClusters << std::endl;
       if (numOfLeaves != numOfTotalClusters) {
-	std::cerr << "# of leaves is invalid " << numOfLeaves << ":" << numOfTotalClusters << std::endl;
+	CERR <<  " "  << "# of leaves is invalid " << numOfLeaves << ":" << numOfTotalClusters << std::endl;
 	abort();
       }
       {
@@ -128,7 +128,7 @@ void QBG::HierarchicalKmeans::treeBasedTopdownClustering(std::string prefix, QBG
 	  qNodeIDs.push_back(nid);
 	}
       }
-      std::cerr << "clustering to make blobs." << std::endl;
+      CERR <<  " "  << "clustering to make blobs." << std::endl;
       hierarchicalKmeansWithNumberOfClustersInParallel(numOfTotalBlobs, numOfObjects, numOfTotalClusters,
 						       objectList, objectSpace, nodes, initMode);
       {
@@ -144,8 +144,8 @@ void QBG::HierarchicalKmeans::threeLayerClustering(std::string prefix, QBG::Inde
   auto &quantizer = static_cast<NGTQ::QuantizerInstance<uint8_t>&>(index.getQuantizer());
   auto &objectSpace = quantizer.globalCodebookIndex.getObjectSpace();
   {
-    std::cerr << "Three layer clustering..." << std::endl;
-    std::cerr << "HiearchicalKmeans::clustering: # of clusters=" << numOfThirdClusters << ":" << index.getQuantizer().property.globalCentroidLimit << std::endl;
+    CERR <<  " "  << "Three layer clustering..." << std::endl;
+    CERR <<  " "  << "HiearchicalKmeans::clustering: # of clusters=" << numOfThirdClusters << ":" << index.getQuantizer().property.globalCentroidLimit << std::endl;
     if (index.getQuantizer().objectList.size() <= 1) {
       NGTThrowException("HierarchicelKmeans: No objects");
     }
@@ -206,15 +206,15 @@ void QBG::HierarchicalKmeans::threeLayerClustering(std::string prefix, QBG::Inde
     NGT::Clustering firstClustering(initMode, NGT::Clustering::ClusteringTypeKmeansWithoutNGT, 300);
     float clusterSizeConstraint = 5.0;
     firstClustering.setClusterSizeConstraintCoefficient(clusterSizeConstraint);
-    std::cerr << "size constraint=" << clusterSizeConstraint << std::endl;
+    CERR <<  " "  << "size constraint=" << clusterSizeConstraint << std::endl;
     std::vector<std::vector<float>> vectors;
     vectors.reserve(numOfFirstObjects);
-    std::cerr << "loading objects..." << std::endl;
+    CERR <<  " "  << "loading objects..." << std::endl;
     NGT::Timer timer;
     std::vector<float> obj;
     for (size_t id = 1; id <= numOfFirstObjects; id++) {
       if (id % 1000000 == 0) {
-	std::cerr << "# of prcessed objects is " << id << std::endl;
+	CERR <<  " "  << "# of prcessed objects is " << id << std::endl;
       }
       if (!objectList.get(id, obj, &objectSpace)) {
 	std::stringstream msg;
@@ -223,56 +223,56 @@ void QBG::HierarchicalKmeans::threeLayerClustering(std::string prefix, QBG::Inde
       }
       vectors.push_back(obj);
     }
-    std::cerr << "loading objects time=" << timer << std::endl;
-    std::cerr << "clustering for the first... (" << vectors.size() << "->" << numOfFirstClusters << ") " << std::endl;
+    CERR <<  " "  << "loading objects time=" << timer << std::endl;
+    CERR <<  " "  << "clustering for the first... (" << vectors.size() << "->" << numOfFirstClusters << ") " << std::endl;
     std::vector<NGT::Clustering::Cluster> firstClusters;
 
     timer.start();
     firstClustering.kmeans(vectors, numOfFirstClusters, firstClusters);
     timer.stop();
-    std::cerr << "end of clustering for the first. # of clusters=" << firstClusters.size() << " time=" << timer << std::endl;
+    CERR <<  " "  << "end of clustering for the first. # of clusters=" << firstClusters.size() << " time=" << timer << std::endl;
 
     std::vector<std::vector<float>> otherVectors;
     timer.start();
-    std::cerr << "assign for the second. (" << numOfFirstObjects << "->" << numOfSecondObjects << ")..." << std::endl;
+    CERR <<  " "  << "assign for the second. (" << numOfFirstObjects << "->" << numOfSecondObjects << ")..." << std::endl;
     assign(firstClusters, numOfFirstObjects + 1, numOfSecondObjects, objectSpace, objectList);
     timer.stop();
-    std::cerr << "end of assign for the second. time=" << timer << ", vmsize=" << NGT::Common::getProcessVmPeakStr() << std::endl;
+    CERR <<  " "  << "end of assign for the second. time=" << timer << ", vmsize=" << NGT::Common::getProcessVmPeakStr() << std::endl;
 
-    std::cerr << "subclustering for the second (" << numOfSecondClusters << ")..." << std::endl;
+    CERR <<  " "  << "subclustering for the second (" << numOfSecondClusters << ")..." << std::endl;
     std::vector<NGT::Clustering::Cluster> secondClusters;
     timer.start();
     subclustering(firstClusters, numOfSecondClusters, numOfSecondObjects, objectSpace, objectList, initMode, secondClusters);
     timer.stop();
-    std::cerr << "end of subclustering for the second. time=" << timer << ", vmsize=" << NGT::Common::getProcessVmPeakStr() << std::endl;
+    CERR <<  " "  << "end of subclustering for the second. time=" << timer << ", vmsize=" << NGT::Common::getProcessVmPeakStr() << std::endl;
     timer.start();
     NGT::Clustering::clearMembers(secondClusters);
-    std::cerr << "assign for the third. (" << 1 << "->" << numOfThirdObjects << ")..." << std::endl;
+    CERR <<  " "  << "assign for the third. (" << 1 << "->" << numOfThirdObjects << ")..." << std::endl;
     assignWithNGT(secondClusters, 1, numOfThirdObjects, objectSpace, objectList, epsilonExplorationSize, expectedRecall);
     {
       size_t noOfRemovedClusters = NGT::Clustering::removeEmptyClusters(secondClusters);
       if (noOfRemovedClusters != 0) {
-	std::cerr << "Clustering: Warning. # of removed clusters=" << noOfRemovedClusters << std::endl;
+	CERR <<  " "  << "Clustering: Warning. # of removed clusters=" << noOfRemovedClusters << std::endl;
       }
     }
     timer.stop();
-    std::cerr << "end of assign for the third. time=" << timer << ", vmsize=" << NGT::Common::getProcessVmPeakStr() << std::endl;
-    std::cerr << "subclustering for the third (" << numOfThirdClusters << ")..." << std::endl;
+    CERR <<  " "  << "end of assign for the third. time=" << timer << ", vmsize=" << NGT::Common::getProcessVmPeakStr() << std::endl;
+    CERR <<  " "  << "subclustering for the third (" << numOfThirdClusters << ")..." << std::endl;
     std::vector<std::vector<NGT::Clustering::Cluster>> thirdClusters;
     timer.start();
     subclustering(secondClusters, numOfThirdClusters, numOfThirdObjects, objectSpace, objectList, initMode, thirdClusters);
     timer.stop();
-    std::cerr << "end of subclustering for the third. time=" << timer << ", vmsize=" << NGT::Common::getProcessVmPeakStr() << std::endl;
+    CERR <<  " "  << "end of subclustering for the third. time=" << timer << ", vmsize=" << NGT::Common::getProcessVmPeakStr() << std::endl;
 
     std::vector<NGT::Clustering::Cluster> thirdFlatClusters;
     flattenClusters(secondClusters, thirdClusters, numOfThirdClusters, thirdFlatClusters);
 
     timer.start();
     NGT::Clustering::clearMembers(thirdFlatClusters);
-    std::cerr << "assign all for the third (" << 1 << "-" << numOfObjects << ")..." << std::endl;
+    CERR <<  " "  << "assign all for the third (" << 1 << "-" << numOfObjects << ")..." << std::endl;
     assignWithNGT(thirdFlatClusters, 1, numOfObjects, objectSpace, objectList, epsilonExplorationSize, expectedRecall);
     timer.stop();
-    std::cerr << "end of assign all for the third. time=" << timer << ", vmsize=" << NGT::Common::getProcessVmPeakStr() << std::endl;
+    CERR <<  " "  << "end of assign all for the third. time=" << timer << ", vmsize=" << NGT::Common::getProcessVmPeakStr() << std::endl;
 
     {
       std::vector<size_t> bqindex;
@@ -285,20 +285,20 @@ void QBG::HierarchicalKmeans::threeLayerClustering(std::string prefix, QBG::Inde
 	    NGTThrowException(msg);
 	  }
 	  if (thirdFlatClusters[idx].members.size() == 0) {
-	    std::cerr << "warning. found an empty cluster in thirdFlatClusters. " << idx << std::endl;
+	    CERR <<  " "  << "warning. found an empty cluster in thirdFlatClusters. " << idx << std::endl;
 	  } else {
 	    bqindex.push_back(idx1);
 	  }
 	}
       }
-      std::cerr << "save the 3rd to the 2nd index..." << std::endl;
+      CERR <<  " "  << "save the 3rd to the 2nd index..." << std::endl;
       NGT::Clustering::saveVector(prefix + QBG::Index::get3rdTo2ndSuffix(), bqindex);
     }
 
-    std::cerr << "save quantization centroid" << std::endl;
+    CERR <<  " "  << "save quantization centroid" << std::endl;
     NGT::Clustering::saveClusters(prefix + QBG::Index::getSecondCentroidSuffix(), secondClusters);
 
-    std::cerr << "save the third centroid..." << std::endl;
+    CERR <<  " "  << "save the third centroid..." << std::endl;
     auto skipEmptyClusters = true;
     NGT::Clustering::saveClusters(prefix + QBG::Index::getThirdCentroidSuffix(), thirdFlatClusters, skipEmptyClusters);
     {
@@ -314,10 +314,10 @@ void QBG::HierarchicalKmeans::threeLayerClustering(std::string prefix, QBG::Inde
 	}
 	idx++;
       }
-      std::cerr << "save index... " << cindex.size() << std::endl;
+      CERR <<  " "  << "save index... " << cindex.size() << std::endl;
       NGT::Clustering::saveVector(prefix + QBG::Index::getObjTo3rdSuffix(), cindex);
     }
-    std::cerr << "end of clustering" << std::endl;
+    CERR <<  " "  << "end of clustering" << std::endl;
     return;
   }
 
@@ -327,8 +327,8 @@ void QBG::HierarchicalKmeans::twoPlusLayerClustering(std::string prefix, QBG::In
   auto &quantizer = static_cast<NGTQ::QuantizerInstance<uint8_t>&>(index.getQuantizer());
   auto &objectSpace = quantizer.globalCodebookIndex.getObjectSpace();
   {
-    std::cerr << "Two layer clustering..." << std::endl;
-    std::cerr << "HiearchicalKmeans::clustering: # of clusters=" << numOfThirdClusters << ":" << index.getQuantizer().property.globalCentroidLimit << std::endl;
+    CERR <<  " "  << "Two layer clustering..." << std::endl;
+    CERR <<  " "  << "HiearchicalKmeans::clustering: # of clusters=" << numOfThirdClusters << ":" << index.getQuantizer().property.globalCentroidLimit << std::endl;
     if (index.getQuantizer().objectList.size() <= 1) {
       NGTThrowException("HierarchicelKmeans: No objects");
     }
@@ -353,7 +353,7 @@ void QBG::HierarchicalKmeans::twoPlusLayerClustering(std::string prefix, QBG::In
       numOfThirdObjects = numOfObjects;
     }
 
-    std::cerr << "The first layer. " << numOfFirstClusters << ":" << numOfFirstObjects << std::endl;
+    CERR <<  " "  << "The first layer. " << numOfFirstClusters << ":" << numOfFirstObjects << std::endl;
     if (numOfThirdClusters == 0 || numOfObjects == 0) {
       NGTThrowException("numOfThirdClusters or numOfObjects are zero");
     }
@@ -385,21 +385,21 @@ void QBG::HierarchicalKmeans::twoPlusLayerClustering(std::string prefix, QBG::In
       NGTThrowException(msg);
     }
 
-    std::cerr << "Two layer clustering. " << numOfFirstClusters << ":" << numOfFirstObjects << "," << numOfSecondClusters << ":" << numOfSecondObjects << "," << numOfThirdClusters << ":" << numOfThirdObjects << " " << numOfObjects << std::endl;
+    CERR <<  " "  << "Two layer clustering. " << numOfFirstClusters << ":" << numOfFirstObjects << "," << numOfSecondClusters << ":" << numOfSecondObjects << "," << numOfThirdClusters << ":" << numOfThirdObjects << " " << numOfObjects << std::endl;
 
     NGT::Clustering firstClustering(initMode, NGT::Clustering::ClusteringTypeKmeansWithoutNGT, 300);
     float clusterSizeConstraint = 5.0;
     firstClustering.setClusterSizeConstraintCoefficient(clusterSizeConstraint);
-    std::cerr << "size constraint=" << clusterSizeConstraint << std::endl;
+    CERR <<  " "  << "size constraint=" << clusterSizeConstraint << std::endl;
     std::vector<std::vector<float>> vectors;
     size_t reserveSize = numOfThirdClusters > numOfFirstObjects ? numOfThirdClusters : numOfFirstObjects;
     vectors.reserve(reserveSize);
-    std::cerr << "loading objects..." << std::endl;
+    CERR <<  " "  << "loading objects..." << std::endl;
     NGT::Timer timer;
     std::vector<float> obj;
     for (size_t id = 1; id <= numOfFirstObjects; id++) {
       if (id % 1000000 == 0) {
-	std::cerr << "# of prcessed objects is " << id << std::endl;
+	CERR <<  " "  << "# of prcessed objects is " << id << std::endl;
       }
       if (!objectList.get(id, obj, &objectSpace)) {
 	std::stringstream msg;
@@ -408,36 +408,36 @@ void QBG::HierarchicalKmeans::twoPlusLayerClustering(std::string prefix, QBG::In
       }
       vectors.push_back(obj);
     }
-    std::cerr << "loading objects time=" << timer << " vmsize=" << NGT::Common::getProcessVmSize() << std::endl;
-    std::cerr << "kmeans clustering... " << vectors.size() << " to " << numOfFirstClusters << std::endl;
+    CERR <<  " "  << "loading objects time=" << timer << " vmsize=" << NGT::Common::getProcessVmSize() << std::endl;
+    CERR <<  " "  << "kmeans clustering... " << vectors.size() << " to " << numOfFirstClusters << std::endl;
     std::vector<NGT::Clustering::Cluster> firstClusters;
 
     timer.start();
     firstClustering.kmeans(vectors, numOfFirstClusters, firstClusters);
     timer.stop();
-    std::cerr << "kmeans clustering. # of clusters=" << firstClusters.size() << " time=" << timer << " vmsize=" << NGT::Common::getProcessVmSize() << std::endl;
+    CERR <<  " "  << "kmeans clustering. # of clusters=" << firstClusters.size() << " time=" << timer << " vmsize=" << NGT::Common::getProcessVmSize() << std::endl;
     timer.start();
-    std::cerr << "assign for the third (" << numOfFirstObjects << "-" << numOfThirdObjects << ")..." << std::endl;
+    CERR <<  " "  << "assign for the third (" << numOfFirstObjects << "-" << numOfThirdObjects << ")..." << std::endl;
     assign(firstClusters, numOfFirstObjects + 1, numOfThirdObjects, objectSpace, objectList);
     timer.stop();
-    std::cerr << "assign for the third. time=" << timer << " vmsize=" << NGT::Common::getProcessVmSize() << std::endl;
+    CERR <<  " "  << "assign for the third. time=" << timer << " vmsize=" << NGT::Common::getProcessVmSize() << std::endl;
 
-    std::cerr << "subclustering for the third (" << numOfThirdClusters << ", " << numOfThirdObjects << ")..." << std::endl;
+    CERR <<  " "  << "subclustering for the third (" << numOfThirdClusters << ", " << numOfThirdObjects << ")..." << std::endl;
     std::vector<NGT::Clustering::Cluster> thirdFlatClusters;
     timer.start();
     subclustering(firstClusters, numOfThirdClusters, numOfThirdObjects, objectSpace, objectList, initMode, thirdFlatClusters);
     timer.stop();
-    std::cerr << "subclustering for the third. time=" << timer << ", vmsize=" << NGT::Common::getProcessVmPeakStr() << std::endl;
+    CERR <<  " "  << "subclustering for the third. time=" << timer << ", vmsize=" << NGT::Common::getProcessVmPeakStr() << std::endl;
 
-    std::cerr << "assign all for the third (" << numOfThirdObjects << "-" << numOfObjects << ")..." << std::endl;
+    CERR <<  " "  << "assign all for the third (" << numOfThirdObjects << "-" << numOfObjects << ")..." << std::endl;
     timer.start();
     assignWithNGT(thirdFlatClusters, numOfThirdObjects + 1, numOfObjects, objectSpace, objectList);
     timer.stop();
-    std::cerr << "assign all for the third. time=" << timer << ", vmsize=" << NGT::Common::getProcessVmPeakStr() << std::endl;
+    CERR <<  " "  << "assign all for the third. time=" << timer << ", vmsize=" << NGT::Common::getProcessVmPeakStr() << std::endl;
 
     std::vector<NGT::Clustering::Cluster> secondClusters;
 
-    std::cerr << "clustering for the second. # of objects=" << thirdFlatClusters.size() << " # of clusters=" << numOfSecondClusters << std::endl;
+    CERR <<  " "  << "clustering for the second. # of objects=" << thirdFlatClusters.size() << " # of clusters=" << numOfSecondClusters << std::endl;
     timer.start();
     vectors.clear();
     vectors.reserve(thirdFlatClusters.size());
@@ -446,16 +446,16 @@ void QBG::HierarchicalKmeans::twoPlusLayerClustering(std::string prefix, QBG::In
       vectors.push_back(v);
     }
     if (clusteringType == QBG::HierarchicalKmeans::ClusteringTypeTwoPlusOneLayer) {
-      std::cerr << "two + one layer clustering..." << std::endl;
+      CERR <<  " "  << "two + one layer clustering..." << std::endl;
       NGT::Clustering clustering(initMode, NGT::Clustering::ClusteringTypeKmeansWithoutNGT, 1000);
       clustering.kmeans(vectors, numOfSecondClusters, secondClusters);
     } else if (clusteringType == QBG::HierarchicalKmeans::ClusteringTypeTwoPlusOneLayer) {
       auto n = numOfSecondObjects / numOfSecondClusters;
-      std::cerr << "two + one layer clustering with NGT... " << n << std::endl;
+      CERR <<  " "  << "two + one layer clustering with NGT... " << n << std::endl;
       NGT::Clustering clustering(initMode, NGT::Clustering::ClusteringTypeKmeansWithNGT, n);
       clustering.kmeans(vectors, numOfSecondClusters, secondClusters);
     } else if (clusteringType == QBG::HierarchicalKmeans::ClusteringTypeTwoPlusTwoLayer) {
-      std::cerr << "two + two layer clustering..." << std::endl;
+      CERR <<  " "  << "two + two layer clustering..." << std::endl;
       twoLayerClustering(vectors, numOfSecondClusters, secondClusters, 100);
     } else {
       std::stringstream msg;
@@ -463,7 +463,7 @@ void QBG::HierarchicalKmeans::twoPlusLayerClustering(std::string prefix, QBG::In
       NGTThrowException(msg);
     }
     timer.stop();
-    std::cerr << "clustering for the second. time=" << timer << " vmsize=" << NGT::Common::getProcessVmSize() << std::endl;
+    CERR <<  " "  << "clustering for the second. time=" << timer << " vmsize=" << NGT::Common::getProcessVmSize() << std::endl;
     NGT::Clustering::saveClusters(prefix + QBG::Index::getSecondCentroidSuffix(), secondClusters);
 
     timer.start();
@@ -476,7 +476,7 @@ void QBG::HierarchicalKmeans::twoPlusLayerClustering(std::string prefix, QBG::In
       }
     }
     timer.stop();
-    std::cerr << "permuting cluster time=" << timer << " vmsize=" << NGT::Common::getProcessVmSize() << std::endl;
+    CERR <<  " "  << "permuting cluster time=" << timer << " vmsize=" << NGT::Common::getProcessVmSize() << std::endl;
 
     std::vector<size_t> cindex(numOfObjects);
     for (size_t cidx = 0; cidx < thirdPermutedClusters.size(); cidx++) {
@@ -485,7 +485,7 @@ void QBG::HierarchicalKmeans::twoPlusLayerClustering(std::string prefix, QBG::In
 	cindex[vid] = cidx;
       }
     }
-    std::cerr << "save index... " << cindex.size() << std::endl;
+    CERR <<  " "  << "save index... " << cindex.size() << std::endl;
     NGT::Clustering::saveVector(prefix + QBG::Index::getObjTo3rdSuffix(), cindex);
 
     std::vector<size_t> bqindex(thirdPermutedClusters.size());
@@ -494,14 +494,14 @@ void QBG::HierarchicalKmeans::twoPlusLayerClustering(std::string prefix, QBG::In
 	bqindex[secondClusters[idx1].members[idx2].vectorID] = idx1;
       }
     }
-    std::cerr << "save bqindex..." << std::endl;
+    CERR <<  " "  << "save bqindex..." << std::endl;
     NGT::Clustering::saveVector(prefix + QBG::Index::get3rdTo2ndSuffix(), bqindex);
-    std::cerr << "save the third  centroid" << std::endl;
+    CERR <<  " "  << "save the third  centroid" << std::endl;
     NGT::Clustering::saveClusters(prefix + QBG::Index::getThirdCentroidSuffix(), thirdPermutedClusters);
 
   }
 
-  std::cerr << "end of clustering" << std::endl;
+  CERR <<  " "  << "end of clustering" << std::endl;
   return;
 }
 
@@ -520,7 +520,7 @@ void QBG::HierarchicalKmeans::multiLayerClustering(QBG::Index &index, std::strin
   if (objectIDsFile.empty()) {
     treeBasedTopdownClustering(prefix, index, rootID, object, nodes, clustering);
   } else {
-    std::cerr << "Cluster ID=" << clusterID << std::endl;
+    CERR <<  " "  << "Cluster ID=" << clusterID << std::endl;
     if (clusterID < 0) {
       std::stringstream msg;
       msg << "Any target cluster ID is not specified.";
@@ -537,9 +537,9 @@ void QBG::HierarchicalKmeans::multiLayerClustering(QBG::Index &index, std::strin
     int32_t cid;
     size_t ccount = 0;
     while (objectIDs >> cid) {
-      std::cerr << cid << std::endl;
+      CERR <<  " "  << cid << std::endl;
       if (id % 100000 == 0) {
-	std::cerr << "# of processed objects=" << id << std::endl;
+	CERR <<  " "  << "# of processed objects=" << id << std::endl;
       }
       if (cid == -1) {
 	continue;
@@ -578,15 +578,16 @@ void QBG::HierarchicalKmeans::multiLayerClustering(QBG::Index &index, std::strin
     }
   }
   if (objectCount != numOfObjects) {
-    std::cerr << "# of objects is invalid. " << objectCount << ":" << numOfObjects << std::endl;
+    CERR <<  " "  << "# of objects is invalid. " << objectCount << ":" << numOfObjects << std::endl;
   }
 }
 
 void QBG::HierarchicalKmeans::clustering(std::string indexPath, std::string prefix, std::string objectIDsFile) {
-  NGT::StdOstreamRedirector redirector(!verbose);
-  redirector.begin();
+  // NGT::StdOstreamRedirector redirector(!verbose);
+  // redirector.begin();
 
-  std::cerr << "The specified params=FC:" << numOfFirstClusters << ":FO:" << numOfFirstObjects
+  fprintf(stderr, "%s::%d clustering\n", __FILE__, __LINE__);
+  CERR <<  " "  << "The specified params=FC:" << numOfFirstClusters << ":FO:" << numOfFirstObjects
 	    << ",SC:" << numOfSecondClusters << ":SO:" << numOfSecondObjects
 	    << ",TC:" << numOfThirdClusters << ":TO:" << numOfThirdObjects << ",O:" << numOfObjects << std::endl;
 
@@ -599,30 +600,30 @@ void QBG::HierarchicalKmeans::clustering(std::string indexPath, std::string pref
     try {
       multiLayerClustering(index, prefix, objectIDsFile);
     } catch(NGT::Exception &err) {
-      redirector.end();
+      // redirector.end();
       throw err;
     }
   } else {
-    std::cerr << "three layer clustering... " << std::endl;
+    CERR <<  " "  << "three layer clustering... " << std::endl;
     try {
       if (numOfObjects == 0) {
 	numOfObjects = index.getQuantizer().objectList.size() - 1;
       }
       if (prefix.empty()) {
-	std::cerr << "Prefix is not specified." << std::endl;
+	CERR <<  " "  << "Prefix is not specified." << std::endl;
 	prefix = indexPath + "/" + QBG::Index::getWorkspaceName();
 	try {
 	  NGT::Index::mkdir(prefix);
 	} catch(...) {}
 	prefix +="/" + QBG::Index::getHierarchicalClusteringPrefix();
-	std::cerr << prefix << " is used" << std::endl;
+	CERR <<  " "  << prefix << " is used" << std::endl;
       }
       auto &quantizer = static_cast<NGTQ::QuantizerInstance<uint8_t>&>(index.getQuantizer());
       auto &objectSpace = quantizer.globalCodebookIndex.getObjectSpace();
       size_t paddedDimension = objectSpace.getPaddedDimension();
       size_t dimension = objectSpace.getDimension();
       if (paddedDimension != dimension) {
-	std::cerr << "HierarachicalKmeans: Warning! Dimensions are inconsistent. Dimension=" << paddedDimension << ":" << dimension << std::endl;
+	CERR <<  " "  << "HierarachicalKmeans: Warning! Dimensions are inconsistent. Dimension=" << paddedDimension << ":" << dimension << std::endl;
       }
       if (clusteringType == QBG::HierarchicalKmeans::ClusteringTypeThreeLayer) {
 	threeLayerClustering(prefix, index);
@@ -630,11 +631,11 @@ void QBG::HierarchicalKmeans::clustering(std::string indexPath, std::string pref
 	twoPlusLayerClustering(prefix, index);
       }
     } catch(NGT::Exception &err) {
-      redirector.end();
+      // redirector.end();
       throw err;
     }
   }
-  redirector.end();
+  // redirector.end();
 }
 
 #endif

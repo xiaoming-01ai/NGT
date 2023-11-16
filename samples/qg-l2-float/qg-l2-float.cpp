@@ -34,7 +34,7 @@ main(int argc, char **argv)
 	obj.push_back(value);
       }
       if (obj.empty()) {
-	cerr << "An empty line or invalid value: " << line << endl;
+	CERR <<  " " <<"An empty line or invalid value: " << line << endl;
 	continue;
       }
       obj.resize(property.dimension);  // cut off additional data in the file.
@@ -44,10 +44,10 @@ main(int argc, char **argv)
     index.createIndex(16);
     index.save();
   } catch (NGT::Exception &err) {
-    cerr << "Error " << err.what() << endl;
+    CERR <<  " " <<"Error " << err.what() << endl;
     return 1;
   } catch (...) {
-    cerr << "Error" << endl;
+    CERR <<  " " <<"Error" << endl;
     return 1;
   }
 
@@ -58,10 +58,10 @@ main(int argc, char **argv)
     std::cout << "quantizing the index..." << std::endl;
     NGTQG::Index::quantize(indexPath, dimensionOfSubvector, maxNumberOfEdges, true);
   } catch (NGT::Exception &err) {
-    cerr << "Error " << err.what() << endl;
+    CERR <<  " " <<"Error " << err.what() << endl;
     return 1;
   } catch (...) {
-    cerr << "Error" << endl;
+    CERR <<  " " <<"Error" << endl;
     return 1;
   }
 
@@ -110,10 +110,10 @@ main(int argc, char **argv)
       cout << endl;
     }
   } catch (NGT::Exception &err) {
-    cerr << "Error " << err.what() << endl;
+    CERR <<  " " <<"Error " << err.what() << endl;
     return 1;
   } catch (...) {
-    cerr << "Error" << endl;
+    CERR <<  " " <<"Error" << endl;
     return 1;
   }
 #endif

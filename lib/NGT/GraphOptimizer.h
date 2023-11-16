@@ -123,7 +123,7 @@ namespace NGT {
 	}
       }
       if (nQueries > ids.size()) {
-	std::cerr << "# of Queries is not enough." << std::endl;
+	CERR <<  " "  << "# of Queries is not enough." << std::endl;
 	return DBL_MAX;
       }
 
@@ -233,159 +233,192 @@ namespace NGT {
 		 const std::string inIndexPath,
 		 const std::string outIndexPath
 		 ){
-      if (access(outIndexPath.c_str(), 0) == 0) {
-	std::stringstream msg;
-	msg << "Optimizer::execute: The specified index exists. " << outIndexPath;
-	NGTThrowException(msg);
-      }
+		if (access(outIndexPath.c_str(), 0) == 0)
+		{
+			std::stringstream msg;
+			msg << "Optimizer::execute: The specified index exists. " << outIndexPath;
+			NGTThrowException(msg);
+		}
 
-      const std::string com = "cp -r " + inIndexPath + " " + outIndexPath;
-      int stat = system(com.c_str());
-      if (stat != 0) {
-	std::stringstream msg;
-	msg << "Optimizer::execute: Cannot create the specified index. " << outIndexPath;
-	NGTThrowException(msg);
-      }
+		const std::string com = "cp -r " + inIndexPath + " " + outIndexPath;
+		int stat = system(com.c_str());
+		if (stat != 0)
+		{
+			std::stringstream msg;
+			msg << "Optimizer::execute: Cannot create the specified index. " << outIndexPath;
+			NGTThrowException(msg);
+		}
 
-      {
-	NGT::StdOstreamRedirector redirector(logDisabled);
-	NGT::GraphIndex graphIndex(outIndexPath, false);
-	if (numOfOutgoingEdges > 0 || numOfIncomingEdges > 0) {
-	  if (!logDisabled) {
-	    std::cerr << "GraphOptimizer: adjusting outgoing and incoming edges..." << std::endl;
-	  }
-	  redirector.begin();
-	  NGT::Timer timer;
-	  timer.start();
-	  std::vector<NGT::ObjectDistances> graph;
-	  try {
-	    std::cerr << "Optimizer::execute: Extract the graph data." << std::endl;
-	    // extract only edges from the index to reduce the memory usage.
-	    NGT::GraphReconstructor::extractGraph(graph, graphIndex);
-	    NeighborhoodGraph::Property &prop = graphIndex.getGraphProperty();
-	    if (prop.graphType != NGT::NeighborhoodGraph::GraphTypeANNG) {
-	      NGT::GraphReconstructor::convertToANNG(graph);
-	    }
-	    NGT::GraphReconstructor::reconstructGraph(graph, graphIndex, numOfOutgoingEdges, numOfIncomingEdges);
-	    timer.stop();
-	    std::cerr << "Optimizer::execute: Graph reconstruction time=" << timer.time << " (sec) " << std::endl;
-	    graphIndex.saveGraph(outIndexPath);
-	    prop.graphType = NGT::NeighborhoodGraph::GraphTypeONNG;
-	    graphIndex.saveProperty(outIndexPath);
-	  } catch (NGT::Exception &err) {
-	    redirector.end();
-	    throw(err);
-	  }
+		{
+			NGT::StdOstreamRedirector redirector(logDisabled);
+			NGT::GraphIndex graphIndex(outIndexPath, false);
+			if (numOfOutgoingEdges > 0 || numOfIncomingEdges > 0)
+			{
+				if (!logDisabled)
+				{
+					CERR <<  " "  << "GraphOptimizer: adjusting outgoing and incoming edges..." << std::endl;
+				}
+				redirector.begin();
+				NGT::Timer timer;
+				timer.start();
+				std::vector<NGT::ObjectDistances> graph;
+				try
+				{
+					CERR <<  " "  << "Optimizer::execute: Extract the graph data." << std::endl;
+					// extract only edges from the index to reduce the memory usage.
+					NGT::GraphReconstructor::extractGraph(graph, graphIndex);
+					NeighborhoodGraph::Property &prop = graphIndex.getGraphProperty();
+					if (prop.graphType != NGT::NeighborhoodGraph::GraphTypeANNG)
+					{
+						NGT::GraphReconstructor::convertToANNG(graph);
+					}
+					NGT::GraphReconstructor::reconstructGraph(graph, graphIndex, numOfOutgoingEdges, numOfIncomingEdges);
+					timer.stop();
+					CERR <<  " "  << "Optimizer::execute: Graph reconstruction time=" << timer.time << " (sec) " << std::endl;
+					graphIndex.saveGraph(outIndexPath);
+					prop.graphType = NGT::NeighborhoodGraph::GraphTypeONNG;
+					graphIndex.saveProperty(outIndexPath);
+				}
+				catch (NGT::Exception &err)
+				{
+					redirector.end();
+					throw(err);
+				}
+			}
+
+			if (shortcutReduction)
+			{
+				if (!logDisabled)
+				{
+					CERR <<  " "  << "GraphOptimizer: redusing shortcut edges..." << std::endl;
+				}
+				try
+				{
+					NGT::Timer timer;
+					timer.start();
+					NGT::GraphReconstructor::adjustPathsEffectively(graphIndex, minNumOfEdges);
+					timer.stop();
+					CERR <<  " "  << "Optimizer::execute: Path adjustment time=" << timer.time << " (sec) " << std::endl;
+					graphIndex.saveGraph(outIndexPath);
+				}
+				catch (NGT::Exception &err)
+				{
+					redirector.end();
+					throw(err);
+				}
+			}
+			redirector.end();
+		}
+
+		optimizeSearchParameters(outIndexPath);
 	}
 
-	if (shortcutReduction) {
-	  if (!logDisabled) {
-	    std::cerr << "GraphOptimizer: redusing shortcut edges..." << std::endl;
-	  }
-	  try {
-	    NGT::Timer timer;
-	    timer.start();
-	    NGT::GraphReconstructor::adjustPathsEffectively(graphIndex, minNumOfEdges);
-	    timer.stop();
-	    std::cerr << "Optimizer::execute: Path adjustment time=" << timer.time << " (sec) " << std::endl;
-	    graphIndex.saveGraph(outIndexPath);
-	  } catch (NGT::Exception &err) {
-	    redirector.end();
-	    throw(err);
-	  }
-	}
-	redirector.end();
-      }
+	void optimizeSearchParameters(const std::string outIndexPath)
+	{
 
-      optimizeSearchParameters(outIndexPath);
+		if (searchParameterOptimization)
+		{
+			if (!logDisabled)
+			{
+				CERR <<  " "  << "GraphOptimizer: optimizing search parameters..." << std::endl;
+			}
+			NGT::Index outIndex(outIndexPath);
+			NGT::GraphIndex &outGraph = static_cast<NGT::GraphIndex &>(outIndex.getIndex());
+			NGT::Optimizer optimizer(outIndex);
+			if (logDisabled)
+			{
+				optimizer.disableLog();
+			}
+			else
+			{
+				optimizer.enableLog();
+			}
+			try
+			{
+				auto coefficients = optimizer.adjustSearchEdgeSize(baseAccuracyRange, rateAccuracyRange, numOfQueries, gtEpsilon, margin);
+				NGT::NeighborhoodGraph::Property &prop = outGraph.getGraphProperty();
+				prop.dynamicEdgeSizeBase = coefficients.first;
+				prop.dynamicEdgeSizeRate = coefficients.second;
+				prop.edgeSizeForSearch = -2;
+				outGraph.saveProperty(outIndexPath);
+			}
+			catch (NGT::Exception &err)
+			{
+				std::stringstream msg;
+				msg << "Optimizer::execute: Cannot adjust the search coefficients. " << err.what();
+				NGTThrowException(msg);
+			}
+		}
 
-    }
-
-    void optimizeSearchParameters(const std::string outIndexPath)
-    {
-
-      if (searchParameterOptimization) {
-	if (!logDisabled) {
-	  std::cerr << "GraphOptimizer: optimizing search parameters..." << std::endl;
-	}
-	NGT::Index	outIndex(outIndexPath);
-	NGT::GraphIndex	&outGraph = static_cast<NGT::GraphIndex&>(outIndex.getIndex());
-	NGT::Optimizer	optimizer(outIndex);
-	if (logDisabled) {
-	  optimizer.disableLog();
-	} else {
-	  optimizer.enableLog();
-	}
-	try {
-	  auto coefficients = optimizer.adjustSearchEdgeSize(baseAccuracyRange, rateAccuracyRange, numOfQueries, gtEpsilon, margin);
-	  NGT::NeighborhoodGraph::Property &prop = outGraph.getGraphProperty();
-	  prop.dynamicEdgeSizeBase = coefficients.first;
-	  prop.dynamicEdgeSizeRate = coefficients.second;
-	  prop.edgeSizeForSearch = -2;
-	  outGraph.saveProperty(outIndexPath);
-	} catch(NGT::Exception &err) {
-	  std::stringstream msg;
-	  msg << "Optimizer::execute: Cannot adjust the search coefficients. " << err.what();
-	  NGTThrowException(msg);
-	}
-      }
-
-      if (searchParameterOptimization || prefetchParameterOptimization || accuracyTableGeneration) {
-	NGT::StdOstreamRedirector redirector(logDisabled);
-	redirector.begin();
-	NGT::Index	outIndex(outIndexPath, true);	
-	NGT::GraphIndex	&outGraph = static_cast<NGT::GraphIndex&>(outIndex.getIndex());
-	if (prefetchParameterOptimization) {
-	  if (!logDisabled) {
-	    std::cerr << "GraphOptimizer: optimizing prefetch parameters..." << std::endl;
-	  }
-	  try {
-	    auto prefetch = adjustPrefetchParameters(outIndex);
-	    NGT::Property prop;
-	    outIndex.getProperty(prop);
-	    prop.prefetchOffset = prefetch.first;
-	    prop.prefetchSize = prefetch.second;
-	    outIndex.setProperty(prop);
-	    outGraph.saveProperty(outIndexPath);
-	  } catch(NGT::Exception &err) {
-	    redirector.end();
-	    std::stringstream msg;
-	    msg << "Optimizer::execute: Cannot adjust prefetch parameters. " << err.what();
-	    NGTThrowException(msg);
-	  }
-	}
-	if (accuracyTableGeneration) {
-	  if (!logDisabled) {
-	    std::cerr << "GraphOptimizer: generating the accuracy table..." << std::endl;
-	  }
-	  try {
-	    auto table = NGT::Optimizer::generateAccuracyTable(outIndex, numOfResults, numOfQueries);
-	    NGT::Index::AccuracyTable accuracyTable(table);
-	    NGT::Property prop;
-	    outIndex.getProperty(prop);
-	    prop.accuracyTable = accuracyTable.getString();
-	    outIndex.setProperty(prop);
-	  } catch(NGT::Exception &err) {
-	    redirector.end();
-	    std::stringstream msg;
-	    msg << "Optimizer::execute: Cannot generate the accuracy table. " << err.what();
-	    NGTThrowException(msg);
-	  }
-	}
-	try {
-	  outGraph.saveProperty(outIndexPath);
-	  redirector.end();
-	} catch(NGT::Exception &err) {
-	  redirector.end();
-	  std::stringstream msg;
-	  msg << "Optimizer::execute: Cannot save the index. " << outIndexPath << err.what();
-	  NGTThrowException(msg);
+		if (searchParameterOptimization || prefetchParameterOptimization || accuracyTableGeneration)
+		{
+			NGT::StdOstreamRedirector redirector(logDisabled);
+			redirector.begin();
+			NGT::Index outIndex(outIndexPath, true);
+			NGT::GraphIndex &outGraph = static_cast<NGT::GraphIndex &>(outIndex.getIndex());
+			if (prefetchParameterOptimization)
+			{
+				if (!logDisabled)
+				{
+					CERR <<  " "  << "GraphOptimizer: optimizing prefetch parameters..." << std::endl;
+				}
+				try
+				{
+					auto prefetch = adjustPrefetchParameters(outIndex);
+					NGT::Property prop;
+					outIndex.getProperty(prop);
+					prop.prefetchOffset = prefetch.first;
+					prop.prefetchSize = prefetch.second;
+					outIndex.setProperty(prop);
+					outGraph.saveProperty(outIndexPath);
+				}
+				catch (NGT::Exception &err)
+				{
+					redirector.end();
+					std::stringstream msg;
+					msg << "Optimizer::execute: Cannot adjust prefetch parameters. " << err.what();
+					NGTThrowException(msg);
+				}
+			}
+			if (accuracyTableGeneration)
+			{
+				if (!logDisabled)
+				{
+					CERR <<  " "  << "GraphOptimizer: generating the accuracy table..." << std::endl;
+				}
+				try
+				{
+					auto table = NGT::Optimizer::generateAccuracyTable(outIndex, numOfResults, numOfQueries);
+					NGT::Index::AccuracyTable accuracyTable(table);
+					NGT::Property prop;
+					outIndex.getProperty(prop);
+					prop.accuracyTable = accuracyTable.getString();
+					outIndex.setProperty(prop);
+				}
+				catch (NGT::Exception &err)
+				{
+					redirector.end();
+					std::stringstream msg;
+					msg << "Optimizer::execute: Cannot generate the accuracy table. " << err.what();
+					NGTThrowException(msg);
+				}
+			}
+			try
+			{
+				outGraph.saveProperty(outIndexPath);
+				redirector.end();
+			}
+			catch (NGT::Exception &err)
+			{
+				redirector.end();
+				std::stringstream msg;
+				msg << "Optimizer::execute: Cannot save the index. " << outIndexPath << err.what();
+				NGTThrowException(msg);
+			}
+		}
 	}
 
-      }
-    }
-
-    static std::tuple<size_t, double, double>	// optimized # of edges, accuracy, accuracy gain per edge
+	static std::tuple<size_t, double, double>	// optimized # of edges, accuracy, accuracy gain per edge
       optimizeNumberOfEdgesForANNG(NGT::Optimizer &optimizer, std::vector<std::vector<float>> &queries,
 				       size_t nOfResults, float targetAccuracy, size_t maxNoOfEdges) {
 

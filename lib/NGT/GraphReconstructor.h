@@ -34,7 +34,7 @@ class GraphReconstructor {
     graph.reserve(graphIndex.repository.size());
     for (size_t id = 1; id < graphIndex.repository.size(); id++) {
       if (id % 1000000 == 0) {
-	std::cerr << "GraphReconstructor::extractGraph: Processed " << id << " objects." << std::endl;
+	CERR <<  " "  << "GraphReconstructor::extractGraph: Processed " << id << " objects." << std::endl;
       }
       try {
 	NGT::GraphNode &node = *graphIndex.getNode(id);
@@ -49,7 +49,7 @@ class GraphReconstructor {
 	graph.push_back(node);
 #endif
 	if (graph.back().size() != graph.back().capacity()) {
-	  std::cerr << "GraphReconstructor::extractGraph: Warning! The graph size must be the same as the capacity. " << id << std::endl;
+	  CERR <<  " "  << "GraphReconstructor::extractGraph: Warning! The graph size must be the same as the capacity. " << id << std::endl;
 	}
       } catch(NGT::Exception &err) {
 	graph.push_back(NGT::ObjectDistances());
@@ -66,7 +66,7 @@ class GraphReconstructor {
     adjustPaths(NGT::Index &outIndex)
   {
 #if defined(NGT_SHARED_MEMORY_ALLOCATOR)
-    std::cerr << "construct index is not implemented." << std::endl;
+    CERR <<  " "  << "construct index is not implemented." << std::endl;
     exit(1);
 #else
     NGT::GraphIndex	&outGraph = dynamic_cast<NGT::GraphIndex&>(outIndex.getIndex());
@@ -93,8 +93,8 @@ class GraphReconstructor {
 	  }
 	  edge = true;
 	  if (rank >= 1 && node[rank - 1].distance > node[rank].distance) {
-	    std::cerr << "distance order is wrong!" << std::endl;
-	    std::cerr << id << ":" << rank << ":" << node[rank - 1].id << ":" << node[rank].id << std::endl;
+	    CERR <<  " "  << "distance order is wrong!" << std::endl;
+	    CERR <<  " "  << id << ":" << rank << ":" << node[rank - 1].id << ":" << node[rank].id << std::endl;
 	  }
 	  NGT::GraphNode &tn = *outGraph.getNode(id);
 	  volatile bool found = false;
@@ -141,7 +141,7 @@ class GraphReconstructor {
 	    removeCount++;
 	  }
 	} catch(NGT::Exception &err) {
-	  std::cerr << "GraphReconstructor: Warning. Cannot get the node. ID=" << id << ":" << err.what() << std::endl;
+	  CERR <<  " "  << "GraphReconstructor: Warning. Cannot get the node. ID=" << id << ":" << err.what() << std::endl;
 	  it++;
 	  continue;
 	}
@@ -211,7 +211,7 @@ class GraphReconstructor {
 	node.clear();
 #endif
       } catch(NGT::Exception &err) {
-	std::cerr << "GraphReconstructor: Warning. Cannot get the node. ID=" << id << ":" << err.what() << std::endl;
+	CERR <<  " "  << "GraphReconstructor: Warning. Cannot get the node. ID=" << id << ":" << err.what() << std::endl;
 #if defined(NGT_SHARED_MEMORY_ALLOCATOR)
 	tmpGraph.push_back(NGT::GraphNode(outGraph.repository.allocator));
 #else
@@ -225,7 +225,7 @@ class GraphReconstructor {
       NGTThrowException(msg);
     }
     timer.stop();
-    std::cerr << "GraphReconstructor::adjustPaths: graph preparing time=" << timer << std::endl;
+    CERR <<  " "  << "GraphReconstructor::adjustPaths: graph preparing time=" << timer << std::endl;
     timer.reset();
     timer.start();
 
@@ -288,12 +288,12 @@ class GraphReconstructor {
 	  removeCandidates[id - 1].push_back(candidates[i].second);
 	}
       } catch(NGT::Exception &err) {
-	std::cerr << "GraphReconstructor: Warning. Cannot get the node. ID=" << id << ":" << err.what() << std::endl;
+	CERR <<  " "  << "GraphReconstructor: Warning. Cannot get the node. ID=" << id << ":" << err.what() << std::endl;
 	continue;
       }
     }
     timer.stop();
-    std::cerr << "GraphReconstructor::adjustPaths: extracting removed edge candidates time=" << timer << std::endl;
+    CERR <<  " "  << "GraphReconstructor::adjustPaths: extracting removed edge candidates time=" << timer << std::endl;
     timer.reset();
     timer.start();
 
@@ -312,7 +312,7 @@ class GraphReconstructor {
 	  NGT::GraphNode &srcNode = tmpGraph[idx];
 	  if (rank >= srcNode.size()) {
 	    if (!removeCandidates[idx].empty() && minNoOfEdges == 0) {
-	      std::cerr << "Something wrong! ID=" << id << " # of remaining candidates=" << removeCandidates[idx].size() << std::endl;
+	      CERR <<  " "  << "Something wrong! ID=" << id << " # of remaining candidates=" << removeCandidates[idx].size() << std::endl;
 	      abort();
 	    }
 #if !defined(NGT_SHARED_MEMORY_ALLOCATOR)
@@ -366,7 +366,7 @@ class GraphReconstructor {
 	  insert(outSrcNode, srcNode[rank].id, srcNode[rank].distance);
 #endif
 	} catch(NGT::Exception &err) {
-	  std::cerr << "GraphReconstructor: Warning. Cannot get the node. ID=" << id << ":" << err.what() << std::endl;
+	  CERR <<  " "  << "GraphReconstructor: Warning. Cannot get the node. ID=" << id << ":" << err.what() << std::endl;
           it++;
 	  continue;
 	}
@@ -390,10 +390,10 @@ class GraphReconstructor {
     void convertToANNG(std::vector<NGT::ObjectDistances> &graph)
   {
 #if defined(NGT_SHARED_MEMORY_ALLOCATOR)
-    std::cerr << "convertToANNG is not implemented for shared memory." << std::endl;
+    CERR <<  " "  << "convertToANNG is not implemented for shared memory." << std::endl;
     return;
 #else
-    std::cerr << "convertToANNG begin" << std::endl;
+    CERR <<  " "  << "convertToANNG begin" << std::endl;
     for (size_t idx = 0; idx < graph.size(); idx++) {
       NGT::GraphNode &node = graph[idx];
       for (auto ni = node.begin(); ni != node.end(); ++ni) {
@@ -418,7 +418,7 @@ class GraphReconstructor {
       NGT::GraphNode tmp = node;
       node.swap(tmp);
     }
-    std::cerr << "convertToANNG end" << std::endl;
+    CERR <<  " "  << "convertToANNG end" << std::endl;
 #endif
   }
 
@@ -426,7 +426,7 @@ class GraphReconstructor {
     void reconstructGraph(std::vector<NGT::ObjectDistances> &graph, NGT::GraphIndex &outGraph, size_t originalEdgeSize, size_t reverseEdgeSize)
   {
     if (reverseEdgeSize > 10000) {
-      std::cerr << "something wrong. Edge size=" << reverseEdgeSize << std::endl;
+      CERR <<  " "  << "something wrong. Edge size=" << reverseEdgeSize << std::endl;
       exit(1);
     }
 
@@ -450,10 +450,10 @@ class GraphReconstructor {
 	  if (n.size() < originalEdgeSize) {
 	    warningCount++;
 	    if (warningCount <= warningLimit) {
-	      std::cerr << "GraphReconstructor: Warning. The edges are too few. " << n.size() << ":" << originalEdgeSize << " for " << id << std::endl;
+	      CERR <<  " "  << "GraphReconstructor: Warning. The edges are too few. " << n.size() << ":" << originalEdgeSize << " for " << id << std::endl;
 	    }
 	    if (warningCount == warningLimit) {
-	      std::cerr << "GraphReconstructor: Info. Too many warnings. Warning is disabled." << std::endl;
+	      CERR <<  " "  << "GraphReconstructor: Info. Too many warnings. Warning is disabled." << std::endl;
 	    }
 	    continue;
 	  }
@@ -467,16 +467,16 @@ class GraphReconstructor {
       } catch(NGT::Exception &err) {
 	warningCount++;
 	if (warningCount <= warningLimit) {
-	  std::cerr << "GraphReconstructor: Warning. Cannot get the node. ID=" << id << ":" << err.what() << std::endl;
+	  CERR <<  " "  << "GraphReconstructor: Warning. Cannot get the node. ID=" << id << ":" << err.what() << std::endl;
 	}
 	if (warningCount == warningLimit) {
-	  std::cerr << "GraphReconstructor: Info. Too many warnings. Warning is disabled." << std::endl;
+	  CERR <<  " "  << "GraphReconstructor: Info. Too many warnings. Warning is disabled." << std::endl;
 	}
 	continue;
       }
     }
     if (warningCount > warningLimit) {
-      std::cerr << "GraphReconstructor: The total " << warningCount << " Warnings." << std::endl;
+      CERR <<  " "  << "GraphReconstructor: The total " << warningCount << " Warnings." << std::endl;
     }
     originalEdgeTimer.stop();
 
@@ -503,13 +503,13 @@ class GraphReconstructor {
 	  } catch(...) {}
 	}
       } catch(NGT::Exception &err) {
-	std::cerr << "GraphReconstructor: Warning. Cannot get the node. ID=" << id << ":" << err.what() << std::endl;
+	CERR <<  " "  << "GraphReconstructor: Warning. Cannot get the node. ID=" << id << ":" << err.what() << std::endl;
 	continue;
       }
     }
     reverseEdgeTimer.stop();
     if (insufficientNodeCount != 0) {
-      std::cerr << "# of the nodes edges of which are in short = " << insufficientNodeCount << std::endl;
+      CERR <<  " "  << "# of the nodes edges of which are in short = " << insufficientNodeCount << std::endl;
     }
 
     normalizeEdgeTimer.start();
@@ -517,7 +517,7 @@ class GraphReconstructor {
       try {
 	NGT::GraphNode &n = *outGraph.getNode(id);
 	if (id % 100000 == 0) {
-	  std::cerr << "Processed " << id << " nodes" << std::endl;
+	  CERR <<  " "  << "Processed " << id << " nodes" << std::endl;
 	}
 #if defined(NGT_SHARED_MEMORY_ALLOCATOR)
 	std::sort(n.begin(outGraph.repository.allocator), n.end(outGraph.repository.allocator));
@@ -546,12 +546,12 @@ class GraphReconstructor {
 	n.swap(tmp);
 #endif
       } catch(NGT::Exception &err) {
-	std::cerr << "GraphReconstructor: Warning. Cannot get the node. ID=" << id << ":" << err.what() << std::endl;
+	CERR <<  " "  << "GraphReconstructor: Warning. Cannot get the node. ID=" << id << ":" << err.what() << std::endl;
 	continue;
       }
     }
     normalizeEdgeTimer.stop();
-    std::cerr << "Reconstruction time=" << originalEdgeTimer.time << ":" << reverseEdgeTimer.time
+    CERR <<  " "  << "Reconstruction time=" << originalEdgeTimer.time << ":" << reverseEdgeTimer.time
 	 << ":" << normalizeEdgeTimer.time << std::endl;
 
     NGT::Property prop;
@@ -568,20 +568,20 @@ class GraphReconstructor {
 					char mode = 'a')
   {
 #if defined(NGT_SHARED_MEMORY_ALLOCATOR)
-    std::cerr << "reconstructGraphWithConstraint is not implemented." << std::endl;
+    CERR <<  " "  << "reconstructGraphWithConstraint is not implemented." << std::endl;
     abort();
 #else
 
     NGT::Timer	originalEdgeTimer, reverseEdgeTimer, normalizeEdgeTimer;
 
     if (reverseEdgeSize > 10000) {
-      std::cerr << "something wrong. Edge size=" << reverseEdgeSize << std::endl;
+      CERR <<  " "  << "something wrong. Edge size=" << reverseEdgeSize << std::endl;
       exit(1);
     }
 
     for (size_t id = 1; id < outGraph.repository.size(); id++) {
       if (id % 1000000 == 0) {
-	std::cerr << "Processed " << id << std::endl;
+	CERR <<  " "  << "Processed " << id << std::endl;
       }
       try {
 	NGT::GraphNode &node = *outGraph.getNode(id);
@@ -592,7 +592,7 @@ class GraphReconstructor {
 	NGT::GraphNode empty;
 	node.swap(empty);
       } catch(NGT::Exception &err) {
-	std::cerr << "GraphReconstructor: Warning. Cannot get the node. ID=" << id << ":" << err.what() << std::endl;
+	CERR <<  " "  << "GraphReconstructor: Warning. Cannot get the node. ID=" << id << ":" << err.what() << std::endl;
 	continue;
       }
     }
@@ -603,13 +603,13 @@ class GraphReconstructor {
       try {
 	NGT::GraphNode &node = graph[id - 1];
 	if (id % 100000 == 0) {
-	  std::cerr << "Processed (summing up) " << id << std::endl;
+	  CERR <<  " "  << "Processed (summing up) " << id << std::endl;
 	}
 	for (size_t rank = 0; rank < node.size(); rank++) {
 	  reverse[node[rank].id].push_back(ObjectDistance(id, node[rank].distance));
 	}
       } catch(NGT::Exception &err) {
-	std::cerr << "GraphReconstructor: Warning. Cannot get the node. ID=" << id << ":" << err.what() << std::endl;
+	CERR <<  " "  << "GraphReconstructor: Warning. Cannot get the node. ID=" << id << ":" << err.what() << std::endl;
 	continue;
       }
     }
@@ -646,7 +646,7 @@ class GraphReconstructor {
       }
     }
     reverseEdgeTimer.stop();
-    std::cerr << "The number of nodes with zero outdegree by reverse edges=" << zeroCount << std::endl;
+    CERR <<  " "  << "The number of nodes with zero outdegree by reverse edges=" << zeroCount << std::endl;
     NGT::GraphIndex::showStatisticsOfGraph(outGraph);
 
     normalizeEdgeTimer.start();
@@ -654,7 +654,7 @@ class GraphReconstructor {
       try {
 	NGT::GraphNode &n = *outGraph.getNode(id);
 	if (id % 100000 == 0) {
-	  std::cerr << "Processed " << id << std::endl;
+	  CERR <<  " "  << "Processed " << id << std::endl;
 	}
 	std::sort(n.begin(), n.end());
 	NGT::ObjectID prev = 0;
@@ -669,7 +669,7 @@ class GraphReconstructor {
 	NGT::GraphNode tmp = n;
 	n.swap(tmp);
       } catch(NGT::Exception &err) {
-	std::cerr << "GraphReconstructor: Warning. Cannot get the node. ID=" << id << ":" << err.what() << std::endl;
+	CERR <<  " "  << "GraphReconstructor: Warning. Cannot get the node. ID=" << id << ":" << err.what() << std::endl;
 	continue;
       }
     }
@@ -679,7 +679,7 @@ class GraphReconstructor {
     originalEdgeTimer.start();
     for (size_t id = 1; id < outGraph.repository.size(); id++) {
       if (id % 1000000 == 0) {
-	std::cerr << "Processed " << id << std::endl;
+	CERR <<  " "  << "Processed " << id << std::endl;
       }
       NGT::GraphNode &node = graph[id - 1];
       try {
@@ -701,14 +701,14 @@ class GraphReconstructor {
 	  outGraph.addEdge(id, nodeID, distance, false);
 	}
       } catch(NGT::Exception &err) {
-	std::cerr << "GraphReconstructor: Warning. Cannot get the node. ID=" << id << ":" << err.what() << std::endl;
+	CERR <<  " "  << "GraphReconstructor: Warning. Cannot get the node. ID=" << id << ":" << err.what() << std::endl;
 	continue;
       }
     }
     originalEdgeTimer.stop();
     NGT::GraphIndex::showStatisticsOfGraph(outGraph);
 
-    std::cerr << "Reconstruction time=" << originalEdgeTimer.time << ":" << reverseEdgeTimer.time
+    CERR <<  " "  << "Reconstruction time=" << originalEdgeTimer.time << ":" << reverseEdgeTimer.time
 	 << ":" << normalizeEdgeTimer.time << std::endl;
 
 #endif
@@ -721,7 +721,7 @@ class GraphReconstructor {
     void reconstructANNGFromANNG(std::vector<NGT::ObjectDistances> &graph, NGT::Index &index, size_t edgeSize)
   {
 #if defined(NGT_SHARED_MEMORY_ALLOCATOR)
-    std::cerr << "reconstructANNGFromANNG is not implemented." << std::endl;
+    CERR <<  " "  << "reconstructANNGFromANNG is not implemented." << std::endl;
     abort();
 #else
 
@@ -730,7 +730,7 @@ class GraphReconstructor {
     // remove all edges in the index.
     for (size_t id = 1; id < outGraph.repository.size(); id++) {
       if (id % 1000000 == 0) {
-	std::cerr << "Processed " << id << " nodes." << std::endl;
+	CERR <<  " "  << "Processed " << id << " nodes." << std::endl;
       }
       try {
 	NGT::GraphNode &node = *outGraph.getNode(id);
@@ -831,7 +831,7 @@ class GraphReconstructor {
       for (size_t idx = 0; idx < batchSize; idx++) {
 	size_t id = bid + idx;
 	if (id % 100000 == 0) {
-	  std::cerr << "# of processed objects=" << id << std::endl;
+	  CERR <<  " "  << "# of processed objects=" << id << std::endl;
 	}
 	if (objectRepository.isEmpty(id)) {
 	  continue;
@@ -897,7 +897,7 @@ class GraphReconstructor {
       for (size_t idx = 0; idx < batchSize; idx++) {
 	size_t id = bid + idx;
 	if (id % 10000 == 0) {
-	  std::cerr << "# of processed objects=" << id << std::endl;
+	  CERR <<  " "  << "# of processed objects=" << id << std::endl;
 	}
 	for (auto i = results[idx].begin(); i != results[idx].end(); ++i) {
 	  if ((*i).id != id) {

@@ -480,13 +480,13 @@ namespace NGT {
 #endif
 
     inline static double compareSparseJaccardDistance(const unsigned char *a, const unsigned char *b, size_t size) {
-      std::cerr << "compareSparseJaccardDistance: Not implemented." << std::endl;
+      CERR <<  " "  << "compareSparseJaccardDistance: Not implemented." << std::endl;
       abort();
     }
 
 #ifdef NGT_HALF_FLOAT
     inline static double compareSparseJaccardDistance(const float16 *a, const float16 *b, size_t size) {
-      std::cerr << "compareSparseJaccardDistance: Not implemented." << std::endl;
+      CERR <<  " "  << "compareSparseJaccardDistance: Not implemented." << std::endl;
       abort();
     }
 #endif

@@ -118,7 +118,7 @@ public:
   ) {
     py::buffer_info info = objects.request();
     if (debug) {
-      std::cerr << info.shape.size() << ":" << info.shape[0] << ":" << info.shape[1] << std::endl;
+      CERR <<  " "  << info.shape.size() << ":" << info.shape[0] << ":" << info.shape[1] << std::endl;
     }
     if ((objects.flags() & py::detail::npy_api::constants::NPY_ARRAY_C_CONTIGUOUS_) == 0) {
       std::stringstream msg;
@@ -147,11 +147,11 @@ public:
     py::buffer_info info = object.request();
     auto ptr = static_cast<double *>(info.ptr);
     if (debug) {
-      std::cerr << info.shape.size() << ":" << info.shape[0] << ":" << info.shape[1] << std::endl;
+      CERR <<  " "  << info.shape.size() << ":" << info.shape[0] << ":" << info.shape[1] << std::endl;
       for (int i = 0; i < info.shape[0]; i++) {
-	std::cerr << *(ptr + i) << " ";
+	CERR <<  " "  << *(ptr + i) << " ";
       }
-      std::cerr << std::endl;
+      CERR <<  " "  << std::endl;
     }
     std::vector<double> v(ptr, ptr + info.shape[0]);
     int id = NGT::Index::insert(v);
@@ -173,7 +173,7 @@ public:
     try {
       ngtquery = NGT::Index::allocateObject(static_cast<float*>(qinfo.ptr), qinfo.size);
     } catch (NGT::Exception &e) {
-      std::cerr << e.what() << std::endl;
+      CERR <<  " "  << e.what() << std::endl;
       if (!withDistance) {
 	return py::array_t<int>();
       } else {
@@ -245,7 +245,7 @@ public:
     try {
       ngtquery = NGT::Index::allocateObject(static_cast<float*>(qinfo.ptr), qinfo.size);
     } catch (NGT::Exception &e) {
-      std::cerr << e.what() << std::endl;
+      CERR <<  " "  << e.what() << std::endl;
       if (!withDistance) {
 	return py::array_t<int>();
       } else {
@@ -389,7 +389,7 @@ public:
 
     auto edge = NGT::GraphOptimizer::optimizeNumberOfEdgesForANNG(path, p);
     if (!logDisabled) {
-      std::cerr << "the optimized number of edges is" << edge.first << "(" << edge.second << ")" << std::endl;
+      CERR <<  " "  << "the optimized number of edges is" << edge.first << "(" << edge.second << ")" << std::endl;
     }
     return edge.first;
   }
@@ -481,7 +481,7 @@ public:
       }
       return results;
     } catch (NGT::Exception &e) {
-      std::cerr << e.what() << std::endl;
+      CERR <<  " "  << e.what() << std::endl;
       if (!withDistance) {
 	return py::array_t<int>();
       } else {
@@ -657,7 +657,7 @@ public:
   ) {
     py::buffer_info info = objects.request();
     if (debug) {
-      std::cerr << info.shape.size() << ":" << info.shape[0] << ":" << info.shape[1] << std::endl;
+      CERR <<  " "  << info.shape.size() << ":" << info.shape[0] << ":" << info.shape[1] << std::endl;
     }
     if ((objects.flags() & py::detail::npy_api::constants::NPY_ARRAY_C_CONTIGUOUS_) == 0) {
       std::stringstream msg;
@@ -670,9 +670,9 @@ public:
     for (int idx = 0; idx < info.shape[0]; idx++) {
       if (debug) {
         for (int i = 0; i < info.shape[1]; i++) {
-          std::cerr << *(ptr + i) << " ";
+          CERR <<  " "  << *(ptr + i) << " ";
         }
-        std::cerr << std::endl;
+        CERR <<  " "  << std::endl;
       }
       std::vector<float> v(ptr, ptr + info.shape[1]);
       ptr += info.shape[1];
@@ -709,7 +709,7 @@ public:
       QBG::Index::search(sc);
       NGT::ResultPriorityQueue &r = sc.getWorkingResult();
       if (r.size() != size) {
-	std::cerr << "result size is invalid? " << r.size() << ":" << size << std::endl;
+	CERR <<  " "  << "result size is invalid? " << r.size() << ":" << size << std::endl;
       }
       size_t rank = size;
       while (!r.empty()) {
@@ -901,7 +901,7 @@ public:
       numOfDistanceComputations += sc.distanceComputationCount;
 
       if (!withDistance) {
-	//-/std::cerr << "without distances" << std::endl;
+	//-/CERR <<  " "  << "without distances" << std::endl;
 	NGT::ResultPriorityQueue &r = sc.getWorkingResult();
 	py::array_t<int> ids(r.size());
 	py::buffer_info idsinfo = ids.request();
@@ -935,7 +935,7 @@ public:
       }
       return results;
     } catch (NGT::Exception &e) {
-      std::cerr << e.what() << std::endl;
+      CERR <<  " "  << e.what() << std::endl;
       if (!withDistance) {
 	return py::array_t<int>();
       } else {

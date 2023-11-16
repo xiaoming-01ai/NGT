@@ -91,13 +91,13 @@ class ObjectFile : public ArrayFile<NGT::Object> {
       return false;
     }
     if (!objectFiles.empty()) {
-      std::cerr << "ObjectFile::openMultipleStreams : already opened multiple streams. close and reopen. # of streams=" << nOfStreams << std::endl;
+      CERR <<  " "  << "ObjectFile::openMultipleStreams : already opened multiple streams. close and reopen. # of streams=" << nOfStreams << std::endl;
       closeMultipleStreams();
     }
     for (size_t i = 0; i < nOfStreams; i++) {
       auto *of = new ObjectFile(*this);
       if (!of->open()) {
-        std::cerr << "ObjectFile::openMultipleStreams: Cannot open. " << fileName << std::endl;
+        CERR <<  " "  << "ObjectFile::openMultipleStreams: Cannot open. " << fileName << std::endl;
         return false;
       }
       objectFiles.push_back(of);
@@ -117,7 +117,7 @@ class ObjectFile : public ArrayFile<NGT::Object> {
   template<typename T>
   bool get(const size_t streamID, size_t id, std::vector<T> &data, NGT::ObjectSpace *objectSpace = 0) {
     if (streamID >= objectFiles.size()) {
-      std::cerr << "ObjectFile::streamID is invalid. " << streamID << ":" << objectFiles.size() << std::endl;
+      CERR <<  " "  << "ObjectFile::streamID is invalid. " << streamID << ":" << objectFiles.size() << std::endl;
       return false;
     }
     if (!objectFiles[streamID]->get(id, data)) {
@@ -252,13 +252,13 @@ class StaticObjectFile {
   bool create(const std::string &file, const std::string &objectPath);
   bool open(const std::string &file, const size_t pseudoDimension = 0);
   void close();
-  size_t insert(TYPE &data, NGT::ObjectSpace *objectSpace = 0) {std::cerr << "insert: not implemented."; abort();}
-  void put(const size_t id, TYPE &data, NGT::ObjectSpace *objectSpace = 0) {std::cerr << "put: not implemented."; abort();}
+  size_t insert(TYPE &data, NGT::ObjectSpace *objectSpace = 0) {CERR <<  " "  << "insert: not implemented."; abort();}
+  void put(const size_t id, TYPE &data, NGT::ObjectSpace *objectSpace = 0) {CERR <<  " "  << "put: not implemented."; abort();}
   bool get(size_t id, std::vector<float> &data, NGT::ObjectSpace *objectSpace = 0);
   bool get(const size_t streamID, size_t id, std::vector<float> &data, NGT::ObjectSpace *objectSpace = 0);
   bool get(size_t id, TYPE &data, NGT::ObjectSpace *objectSpace = 0);
   bool get(const size_t streamID, size_t id, TYPE &data, NGT::ObjectSpace *objectSpace = 0);
-  void remove(const size_t id) {std::cerr << "remove: not implemented."; abort();}
+  void remove(const size_t id) {CERR <<  " "  << "remove: not implemented."; abort();}
   bool isOpen() const;
   size_t size();
   size_t getRecordSize() { return _recordSize; }
@@ -270,31 +270,31 @@ class StaticObjectFileLoader {
 public:
   StaticObjectFileLoader(const std::string &path, std::string t = "") {
     if (path.find(".u8bin") != std::string::npos || t == "uint8") {
-      std::cerr << "type=u8bin" << std::endl;
+      CERR <<  " "  << "type=u8bin" << std::endl;
       type = "u8";
       sizeOfObject = 1;
     } else if (path.find(".i8bin") != std::string::npos || t == "int8") {
-      std::cerr << "type=i8bin" << std::endl;
+      CERR <<  " "  << "type=i8bin" << std::endl;
       type = "i8";
       sizeOfObject = 1;
     } else if (path.find(".fbin") != std::string::npos || t == "float32") {
-      std::cerr << "type=fbin" << std::endl;
+      CERR <<  " "  << "type=fbin" << std::endl;
       type = "f";
       sizeOfObject = 4;
     } else {
-      std::cerr << "Fatal error!!!" << std::endl;
+      CERR <<  " "  << "Fatal error!!!" << std::endl;
       exit(1);
     }
     stream.open(path, std::ios::in | std::ios::binary);
     if (!stream) {
-      std::cerr << "qbg: Error! " << path << std::endl;
+      CERR <<  " "  << "qbg: Error! " << path << std::endl;
       return;
     }
     stream.read(reinterpret_cast<char*>(&noOfObjects), sizeof(noOfObjects));
     stream.read(reinterpret_cast<char*>(&noOfDimensions), sizeof(noOfDimensions));
     sizeOfObject *= noOfDimensions;
-    std::cerr << "# of objects=" << noOfObjects << std::endl;
-    std::cerr << "# of dimensions=" << noOfDimensions << std::endl;
+    CERR <<  " "  << "# of objects=" << noOfObjects << std::endl;
+    CERR <<  " "  << "# of dimensions=" << noOfDimensions << std::endl;
     counter = 0;
   }
 
@@ -318,7 +318,7 @@ public:
 	uint8_t v;
 	stream.read(reinterpret_cast<char*>(&v), sizeof(v));
 	if (stream.eof()) {
-	  std::cerr << "something wrong" << std::endl;
+	  CERR <<  " "  << "something wrong" << std::endl;
 	  return object;
 	}
 	object.push_back(v);
@@ -328,7 +328,7 @@ public:
 	int8_t v;
 	stream.read(reinterpret_cast<char*>(&v), sizeof(v));
 	if (stream.eof()) {
-	  std::cerr << "something wrong" << std::endl;
+	  CERR <<  " "  << "something wrong" << std::endl;
 	  return object;
 	}
 	object.push_back(v);
@@ -338,13 +338,13 @@ public:
 	float v;
 	stream.read(reinterpret_cast<char*>(&v), sizeof(v));
 	if (stream.eof()) {
-	  std::cerr << "something wrong" << std::endl;
+	  CERR <<  " "  << "something wrong" << std::endl;
 	  return object;
 	}
 	object.push_back(v);
       }
     } else {
-      std::cerr << "Fatal error!!!" << std::endl;
+      CERR <<  " "  << "Fatal error!!!" << std::endl;
       exit(1);
     }
     counter++;
@@ -379,7 +379,7 @@ bool StaticObjectFile<TYPE>::create(const std::string &file, const std::string &
   {
     _stream.open(objectPath, std::ios::in);
     if (!_stream) {
-      std::cerr << "Cannot open " << objectPath << std::endl;
+      CERR <<  " "  << "Cannot open " << objectPath << std::endl;
       return false;
     }
     bool ret = _readFileHead();
@@ -396,7 +396,7 @@ bool StaticObjectFile<TYPE>::create(const std::string &file, const std::string &
     tmpstream << _fileHead.noOfObjects << std::endl;
     tmpstream << _fileHead.noOfDimensions << std::endl;
     if (tokens.size() <= 1) {
-      std::cerr << "The specifiled object file name has no proper extensions. " << objectPath << " use fbin." << std::endl;
+      CERR <<  " "  << "The specifiled object file name has no proper extensions. " << objectPath << " use fbin." << std::endl;
       tmpstream << "fbin" << std::endl;
     } else {
       tmpstream << tokens.back() << std::endl;
@@ -416,7 +416,7 @@ bool StaticObjectFile<TYPE>::open(const std::string &file, size_t pseudoDimensio
     std::ifstream tmpstream;
     tmpstream.open(file);
     if (!tmpstream) {
-      std::cerr << "Cannot open " << file << std::endl;
+      CERR <<  " "  << "Cannot open " << file << std::endl;
       abort();
     }
     tmpstream >> noOfObjects;
@@ -466,7 +466,7 @@ bool StaticObjectFile<TYPE>::openMultipleStreams(const size_t nOfStreams) {
     return false;
   }
   if (!_objectFiles.empty()) {
-    std::cerr << "StaticObjectFile : already opened multiple streams. close and reopen. # of streams=" << nOfStreams << std::endl;
+    CERR <<  " "  << "StaticObjectFile : already opened multiple streams. close and reopen. # of streams=" << nOfStreams << std::endl;
     closeMultipleStreams();
   }
   for (size_t i = 0; i < nOfStreams; i++) {
@@ -482,7 +482,7 @@ bool StaticObjectFile<TYPE>::openMultipleStreams(const size_t nOfStreams) {
 template <class TYPE>
 bool StaticObjectFile<TYPE>::get(const size_t streamID, size_t id, std::vector<float> &data, NGT::ObjectSpace *objectSpace) {
   if (streamID >= _objectFiles.size()) {
-    std::cerr << "streamID is invalid. " << streamID << ":" << _objectFiles.size() << std::endl;
+    CERR <<  " "  << "streamID is invalid. " << streamID << ":" << _objectFiles.size() << std::endl;
     return false;
   }
   if (!_objectFiles[streamID]->get(id, data, objectSpace)) {
@@ -494,7 +494,7 @@ bool StaticObjectFile<TYPE>::get(const size_t streamID, size_t id, std::vector<f
 template <class TYPE>
 bool StaticObjectFile<TYPE>::get(const size_t streamID, size_t id, TYPE &data, NGT::ObjectSpace *objectSpace) {
   if (streamID >= _objectFiles.size()) {
-    std::cerr << "streamID is invalid. " << streamID << ":" << _objectFiles.size() << std::endl;
+    CERR <<  " "  << "streamID is invalid. " << streamID << ":" << _objectFiles.size() << std::endl;
     return false;
   }
   if (!_objectFiles[streamID]->get(id, data, objectSpace)) {
@@ -580,7 +580,7 @@ bool StaticObjectFile<TYPE>::get(size_t id, std::vector<float> &data, NGT::Objec
       break;
     }
   } else {
-    std::cerr << "StaticObjectFile::get something wrong! id=" << id << " type=" << _type << std::endl;
+    CERR <<  " "  << "StaticObjectFile::get something wrong! id=" << id << " type=" << _type << std::endl;
     abort();
   }
 

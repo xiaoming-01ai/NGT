@@ -206,7 +206,7 @@ namespace NGT {
 	  }
 	  usedSize = s;
 	} else {
-	  std::cerr << "ReadOnlyGraphNode: Not implemented" << std::endl;
+	  CERR <<  " "  << "ReadOnlyGraphNode: Not implemented" << std::endl;
 	  abort();
 	}
       }
@@ -241,7 +241,7 @@ namespace NGT {
 	      searchNode.reserve(node.size());
 #if defined(NGT_SHARED_MEMORY_ALLOCATOR)
 	      for (auto ni = node.begin(); ni != node.end(); ni++) {
-		std::cerr << "not implement" << std::endl;
+		CERR <<  " "  << "not implement" << std::endl;
 		abort();
 	      }
 #else
@@ -502,7 +502,7 @@ namespace NGT {
 	  case NeighborhoodGraph::GraphTypeBKNNG: p.set("GraphType", "BKNNG"); break;
 	  case NeighborhoodGraph::GraphTypeONNG: p.set("GraphType", "ONNG"); break;
 	  case NeighborhoodGraph::GraphTypeIANNG: p.set("GraphType", "IANNG"); break;
-	  default: std::cerr << "Graph::exportProperty: Fatal error! Invalid Graph Type. " << graphType << std::endl; abort();
+	  default: CERR <<  " "  << "Graph::exportProperty: Fatal error! Invalid Graph Type. " << graphType << std::endl; abort();
 	  }
 	  switch (seedType) {
 	  case NeighborhoodGraph::SeedTypeRandomNodes: p.set("SeedType", "RandomNodes"); break;
@@ -510,7 +510,7 @@ namespace NGT {
 	  case NeighborhoodGraph::SeedTypeFirstNode: p.set("SeedType", "FirstNode"); break;
 	  case NeighborhoodGraph::SeedTypeNone: p.set("SeedType", "None"); break;
 	  case NeighborhoodGraph::SeedTypeAllLeafNodes: p.set("SeedType", "AllLeafNodes"); break;
-	  default: std::cerr << "Graph::exportProperty: Fatal error! Invalid Seed Type. " << seedType << std::endl; abort();
+	  default: CERR <<  " "  << "Graph::exportProperty: Fatal error! Invalid Seed Type. " << seedType << std::endl; abort();
 	  }
 	}
 	void importProperty(NGT::PropertySet &p) {
@@ -536,7 +536,7 @@ namespace NGT {
 	    else if (it->second == "BKNNG")     graphType = NeighborhoodGraph::GraphTypeBKNNG;
 	    else if (it->second == "ONNG")      graphType = NeighborhoodGraph::GraphTypeONNG;
 	    else if (it->second == "IANNG")	graphType = NeighborhoodGraph::GraphTypeIANNG;
-	    else { std::cerr << "Graph::importProperty: Fatal error! Invalid Graph Type. " << it->second << std::endl; abort(); }
+	    else { CERR <<  " "  << "Graph::importProperty: Fatal error! Invalid Graph Type. " << it->second << std::endl; abort(); }
 	  }
 	  it = p.find("SeedType");
 	  if (it != p.end()) {
@@ -545,7 +545,7 @@ namespace NGT {
 	    else if (it->second == "FirstNode")		seedType = NeighborhoodGraph::SeedTypeFirstNode;
 	    else if (it->second == "None")		seedType = NeighborhoodGraph::SeedTypeNone;
 	    else if (it->second == "AllLeafNodes")	seedType = NeighborhoodGraph::SeedTypeAllLeafNodes;
-	    else { std::cerr << "Graph::importProperty: Fatal error! Invalid Seed Type. " << it->second << std::endl; abort(); }
+	    else { CERR <<  " "  << "Graph::importProperty: Fatal error! Invalid Seed Type. " << it->second << std::endl; abort(); }
 	  }
 	}
 	friend std::ostream & operator<<(std::ostream& os, const Property& p) {

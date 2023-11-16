@@ -28,11 +28,11 @@ static bool operate_error_string_(const std::stringstream &ss, NGTError error){
       std::string *error_str = static_cast<std::string*>(error);
       *error_str = ss.str();
     }catch(std::exception &err){
-      std::cerr << ss.str() << " > " << err.what() << std::endl;
+      CERR <<  " "  << ss.str() << " > " << err.what() << std::endl;
       return false;
     }
   }else{
-    std::cerr << ss.str() << std::endl;
+    CERR <<  " "  << ss.str() << std::endl;
   }
   return true;
 }
@@ -1276,7 +1276,7 @@ NGTError ngt_create_error_object()
     std::string *error_str = new std::string();
     return static_cast<NGTError>(error_str);
   }catch(std::exception &err){
-    std::cerr << "Capi : " << __FUNCTION__ << "() : Error: " << err.what();
+    CERR <<  " "  << "Capi : " << __FUNCTION__ << "() : Error: " << err.what();
     return NULL;
   }
 }
@@ -1542,7 +1542,7 @@ bool ngt_optimize_number_of_edges(const char *indexPath, NGTAnngEdgeOptimization
     std::string path(indexPath);
     auto edge = graphOptimizer.optimizeNumberOfEdgesForANNG(path, p);
     if (parameter.log) {
-      std::cerr << "the optimized number of edges is" << edge.first << "(" << edge.second << ")" << std::endl;
+      CERR <<  " "  << "the optimized number of edges is" << edge.first << "(" << edge.second << ")" << std::endl;
     }
   }catch(std::exception &err) {
     std::stringstream ss;

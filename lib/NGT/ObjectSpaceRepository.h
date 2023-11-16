@@ -445,7 +445,7 @@ namespace NGT {
 	break;
 #endif
       default:
-	std::cerr << "Distance type is not specified" << std::endl;
+	CERR <<  " "  << "Distance type is not specified" << std::endl;
 	assert(distanceType != DistanceTypeNone);
 	abort();
       }
@@ -716,7 +716,7 @@ namespace NGT {
     } else if (t == typeid(uint32_t)) {
       NGT::Serializer::writeAsText(os, (uint32_t*)ref, dimension);
     } else {
-      std::cerr << "ObjectT::serializeAsText: not supported data type. [" << t.name() << "]" << std::endl;
+      CERR <<  " "  << "ObjectT::serializeAsText: not supported data type. [" << t.name() << "]" << std::endl;
       assert(0);
     }
   }
@@ -743,7 +743,7 @@ namespace NGT {
     } else if (t == typeid(uint32_t)) {
       NGT::Serializer::readAsText(is, (uint32_t*)ref, dimension);
     } else {
-      std::cerr << "Object::deserializeAsText: not supported data type. [" << t.name() << "]" << std::endl;
+      CERR <<  " "  << "Object::deserializeAsText: not supported data type. [" << t.name() << "]" << std::endl;
       assert(0);
     }
   }

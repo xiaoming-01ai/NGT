@@ -260,7 +260,7 @@ namespace NGT {
       }
       assert(objectspace != 0);
 #if defined(NGT_SHARED_MEMORY_ALLOCATOR)
-      std::cerr << "not implemented" << std::endl;
+      CERR <<  " "  << "not implemented" << std::endl;
       assert(0);
 #else
       getPivot().deserialize(is, objectspace);
@@ -456,7 +456,7 @@ namespace NGT {
       NGT::Serializer::write(os, objectSize);
       for (int i = 0; i < objectSize; i++) {
 #ifdef NGT_SHARED_MEMORY_ALLOCATOR
-	std::cerr << "not implemented" << std::endl;
+	CERR <<  " "  << "not implemented" << std::endl;
 	assert(0);
 #else
 	objectIDs[i].serialize(os);
@@ -470,7 +470,7 @@ namespace NGT {
 	}
       } else {
 #ifdef NGT_SHARED_MEMORY_ALLOCATOR
-	std::cerr << "not implemented" << std::endl;
+	CERR <<  " "  << "not implemented" << std::endl;
 	assert(0);
 #else
 	assert(objectspace != 0);
@@ -489,7 +489,7 @@ namespace NGT {
       NGT::Serializer::read(is, objectSize);
       for (int i = 0; i < objectSize; i++) {
 #if defined(NGT_SHARED_MEMORY_ALLOCATOR)
-	std::cerr << "not implemented" << std::endl;
+	CERR <<  " "  << "not implemented" << std::endl;
 	assert(0);
 #else
 	getObjectIDs()[i].deserialize(is);
@@ -510,7 +510,7 @@ namespace NGT {
       }
       assert(objectspace != 0);
 #if defined(NGT_SHARED_MEMORY_ALLOCATOR)
-      std::cerr << "not implemented" << std::endl;
+      CERR <<  " "  << "not implemented" << std::endl;
       assert(0);
 #else
       getPivot().deserialize(is, objectspace);
@@ -593,7 +593,7 @@ namespace NGT {
       std::cout << "Show leaf node " << objectSize << ":";
       for (int i = 0; i < objectSize; i++) {
 #if defined(NGT_SHARED_MEMORY_ALLOCATOR)
-	std::cerr << "not implemented" << std::endl;
+	CERR <<  " "  << "not implemented" << std::endl;
 	assert(0);
 #else
 	std::cout << getObjectIDs()[i].id << "," << getObjectIDs()[i].distance << " ";

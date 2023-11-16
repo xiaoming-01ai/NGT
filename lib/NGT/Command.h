@@ -110,7 +110,7 @@ public:
   {
     std::ifstream		is(searchParameters.query);
     if (!is) {
-      std::cerr << "Cannot open the specified file. " << searchParameters.query << std::endl;
+      CERR <<  " "  << "Cannot open the specified file. " << searchParameters.query << std::endl;
       return;
     }
     search(index, searchParameters, is, stream);

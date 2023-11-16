@@ -23,7 +23,7 @@ new(size_t size, SharedMemoryAllocator &allocator)
 {
   void *addr = allocator.allocate(size);
 #ifdef MEMORY_ALLOCATOR_INFO
-  std::cerr << "new:" << size << " " << addr << " " << allocator.getTotalSize() << std::endl;
+  CERR <<  " "  << "new:" << size << " " << addr << " " << allocator.getTotalSize() << std::endl;
 #endif
   return addr;
 }
@@ -34,7 +34,7 @@ new[](size_t size, SharedMemoryAllocator &allocator)
 
   void *addr = allocator.allocate(size);
 #ifdef MEMORY_ALLOCATOR_INFO
-  std::cerr << "new[]:" << size << " " << addr << " " << allocator.getTotalSize() << std::endl;
+  CERR <<  " "  << "new[]:" << size << " " << addr << " " << allocator.getTotalSize() << std::endl;
 #endif
   return addr;
 }

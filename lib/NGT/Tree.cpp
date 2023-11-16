@@ -551,7 +551,7 @@ DVPTree::search(SearchContainer &sc) {
     uncheckedNode.pop();
     Node *cnode = getNode(nodeid);
     if (cnode == 0) {
-      cerr << "Error! child node is null. but continue." << endl;
+      CERR <<  " " <<"Error! child node is null. but continue." << endl;
       continue;
     }
     if (cnode->id.getType() == Node::ID::Internal) {
@@ -559,7 +559,7 @@ DVPTree::search(SearchContainer &sc) {
     } else if (cnode->id.getType() == Node::ID::Leaf) {
       search(sc, (LeafNode&)*cnode, uncheckedNode);
     } else {
-      cerr << "Tree: Inner fatal error!: Node type error!" << endl;
+      CERR <<  " " <<"Tree: Inner fatal error!: Node type error!" << endl;
       abort();
     }
   }

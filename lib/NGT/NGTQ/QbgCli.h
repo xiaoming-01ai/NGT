@@ -27,23 +27,23 @@ namespace QBG {
     int debugLevel;
 
 #if !defined(NGTQ_QBG) || defined(NGTQ_SHARED_INVERTED_INDEX)
-    void create(NGT::Args &args) { std::cerr << "not implemented." << std::endl; };
-    void load(NGT::Args &args) { std::cerr << "not implemented." << std::endl; };
-    void append(NGT::Args &args) { std::cerr << "not implemented." << std::endl; };
-    void buildIndex(NGT::Args &args) { std::cerr << "not implemented." << std::endl; };
-    void hierarchicalKmeans(NGT::Args &args) { std::cerr << "not implemented." << std::endl; };
-    void search(NGT::Args &args) { std::cerr << "not implemented." << std::endl; };
-    void assign(NGT::Args &args) { std::cerr << "not implemented." << std::endl; };
-    void extract(NGT::Args &args) { std::cerr << "not implemented." << std::endl; };
-    void gt(NGT::Args &args) { std::cerr << "not implemented." << std::endl; };
-    void gtRange(NGT::Args &args) { std::cerr << "not implemented." << std::endl; };
-    void optimize(NGT::Args &args) { std::cerr << "not implemented." << std::endl; };
-    void build(NGT::Args &args) { std::cerr << "not implemented." << std::endl; };
-    void createQG(NGT::Args &args) { std::cerr << "not implemented." << std::endl; };
-    void buildQG(NGT::Args &args) { std::cerr << "not implemented." << std::endl; };
-    void appendQG(NGT::Args &args) { std::cerr << "not implemented." << std::endl; };
-    void searchQG(NGT::Args &args) { std::cerr << "not implemented." << std::endl; };
-    void info(NGT::Args &args) { std::cerr << "not implemented." << std::endl; };
+    void create(NGT::Args &args) { CERR <<  " "  << "not implemented." << std::endl; };
+    void load(NGT::Args &args) { CERR <<  " "  << "not implemented." << std::endl; };
+    void append(NGT::Args &args) { CERR <<  " "  << "not implemented." << std::endl; };
+    void buildIndex(NGT::Args &args) { CERR <<  " "  << "not implemented." << std::endl; };
+    void hierarchicalKmeans(NGT::Args &args) { CERR <<  " "  << "not implemented." << std::endl; };
+    void search(NGT::Args &args) { CERR <<  " "  << "not implemented." << std::endl; };
+    void assign(NGT::Args &args) { CERR <<  " "  << "not implemented." << std::endl; };
+    void extract(NGT::Args &args) { CERR <<  " "  << "not implemented." << std::endl; };
+    void gt(NGT::Args &args) { CERR <<  " "  << "not implemented." << std::endl; };
+    void gtRange(NGT::Args &args) { CERR <<  " "  << "not implemented." << std::endl; };
+    void optimize(NGT::Args &args) { CERR <<  " "  << "not implemented." << std::endl; };
+    void build(NGT::Args &args) { CERR <<  " "  << "not implemented." << std::endl; };
+    void createQG(NGT::Args &args) { CERR <<  " "  << "not implemented." << std::endl; };
+    void buildQG(NGT::Args &args) { CERR <<  " "  << "not implemented." << std::endl; };
+    void appendQG(NGT::Args &args) { CERR <<  " "  << "not implemented." << std::endl; };
+    void searchQG(NGT::Args &args) { CERR <<  " "  << "not implemented." << std::endl; };
+    void info(NGT::Args &args) { CERR <<  " "  << "not implemented." << std::endl; };
 #else
     void create(NGT::Args &args);
     void load(NGT::Args &args);

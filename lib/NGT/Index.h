@@ -114,7 +114,7 @@ namespace NGT {
 #ifdef NGT_HALF_FLOAT
 	case ObjectSpace::ObjectType::Float16: p.set("ObjectType", "Float-2"); break;
 #endif
-	default : std::cerr << "Fatal error. Invalid object type. " << objectType << std::endl; abort();
+	default : CERR <<  " "  << "Fatal error. Invalid object type. " << objectType << std::endl; abort();
 	}
 	switch (distanceType) {
 	case DistanceType::DistanceTypeNone:			p.set("DistanceType", "None"); break;
@@ -130,23 +130,23 @@ namespace NGT {
 	case DistanceType::DistanceTypeNormalizedL2:		p.set("DistanceType", "NormalizedL2"); break;
 	case DistanceType::DistanceTypePoincare:		p.set("DistanceType", "Poincare"); break;  // added by Nyapicom
 	case DistanceType::DistanceTypeLorentz:			p.set("DistanceType", "Lorentz"); break;  // added by Nyapicom
-	default : std::cerr << "Fatal error. Invalid distance type. " << distanceType << std::endl; abort();
+	default : CERR <<  " "  << "Fatal error. Invalid distance type. " << distanceType << std::endl; abort();
 	}
 	switch (indexType) {
 	case IndexType::GraphAndTree:	p.set("IndexType", "GraphAndTree"); break;
 	case IndexType::Graph:		p.set("IndexType", "Graph"); break;
-	default : std::cerr << "Fatal error. Invalid index type. " << indexType << std::endl; abort();
+	default : CERR <<  " "  << "Fatal error. Invalid index type. " << indexType << std::endl; abort();
 	}
 	switch (databaseType) {
 	case DatabaseType::Memory:		p.set("DatabaseType", "Memory"); break;
 	case DatabaseType::MemoryMappedFile:	p.set("DatabaseType", "MemoryMappedFile"); break;
-	default : std::cerr << "Fatal error. Invalid database type. " << databaseType << std::endl; abort();
+	default : CERR <<  " "  << "Fatal error. Invalid database type. " << databaseType << std::endl; abort();
 	}
 	switch (objectAlignment) {
 	case ObjectAlignment::ObjectAlignmentNone:	p.set("ObjectAlignment", "None"); break;
 	case ObjectAlignment::ObjectAlignmentTrue:	p.set("ObjectAlignment", "True"); break;
 	case ObjectAlignment::ObjectAlignmentFalse:	p.set("ObjectAlignment", "False"); break;
-	default : std::cerr << "Fatal error. Invalid objectAlignment. " << objectAlignment << std::endl; abort();
+	default : CERR <<  " "  << "Fatal error. Invalid objectAlignment. " << objectAlignment << std::endl; abort();
 	}
 	p.set("PathAdjustmentInterval", pathAdjustmentInterval);
 #ifdef NGT_SHARED_MEMORY_ALLOCATOR
@@ -174,10 +174,10 @@ namespace NGT {
 	    objectType = ObjectSpace::ObjectType::Float16;
 #endif
 	  } else {
-	    std::cerr << "Invalid Object Type in the property. " << it->first << ":" << it->second << std::endl;
+	    CERR <<  " "  << "Invalid Object Type in the property. " << it->first << ":" << it->second << std::endl;
 	  }
 	} else {
-	  std::cerr << "Not found \"ObjectType\"" << std::endl;
+	  CERR <<  " "  << "Not found \"ObjectType\"" << std::endl;
 	}
 	it = p.find("DistanceType");
 	if (it != p.end()) {
@@ -208,10 +208,10 @@ namespace NGT {
 	  } else if (it->second == "NormalizedL2") {
 	    distanceType = DistanceType::DistanceTypeNormalizedL2;
 	  } else {
-	    std::cerr << "Invalid Distance Type in the property. " << it->first << ":" << it->second << std::endl;
+	    CERR <<  " "  << "Invalid Distance Type in the property. " << it->first << ":" << it->second << std::endl;
 	  }
 	} else {
-	  std::cerr << "Not found \"DistanceType\"" << std::endl;
+	  CERR <<  " "  << "Not found \"DistanceType\"" << std::endl;
 	}
 	it = p.find("IndexType");
 	if (it != p.end()) {
@@ -220,10 +220,10 @@ namespace NGT {
 	  } else if (it->second == "Graph") {
 	    indexType = IndexType::Graph;
 	  } else {
-	    std::cerr << "Invalid Index Type in the property. " << it->first << ":" << it->second << std::endl;
+	    CERR <<  " "  << "Invalid Index Type in the property. " << it->first << ":" << it->second << std::endl;
 	  }
 	} else {
-	  std::cerr << "Not found \"IndexType\"" << std::endl;
+	  CERR <<  " "  << "Not found \"IndexType\"" << std::endl;
 	}
 	it = p.find("DatabaseType");
 	if (it != p.end()) {
@@ -232,10 +232,10 @@ namespace NGT {
 	  } else if (it->second == "MemoryMappedFile") {
 	    databaseType = DatabaseType::MemoryMappedFile;
 	  } else {
-	    std::cerr << "Invalid Database Type in the property. " << it->first << ":" << it->second << std::endl;
+	    CERR <<  " "  << "Invalid Database Type in the property. " << it->first << ":" << it->second << std::endl;
 	  }
 	} else {
-	  std::cerr << "Not found \"DatabaseType\"" << std::endl;
+	  CERR <<  " "  << "Not found \"DatabaseType\"" << std::endl;
 	}
 	it = p.find("ObjectAlignment");
 	if (it != p.end()) {
@@ -246,10 +246,10 @@ namespace NGT {
 	  } else if (it->second == "False") {
 	    objectAlignment = ObjectAlignment::ObjectAlignmentFalse;
 	  } else {
-	    std::cerr << "Invalid Object Alignment in the property. " << it->first << ":" << it->second << std::endl;
+	    CERR <<  " "  << "Invalid Object Alignment in the property. " << it->first << ":" << it->second << std::endl;
 	  }
 	} else {
-	  std::cerr << "Not found \"ObjectAlignment\"" << std::endl;
+	  CERR <<  " "  << "Not found \"ObjectAlignment\"" << std::endl;
 	  objectAlignment = ObjectAlignment::ObjectAlignmentFalse;
 	}
 	pathAdjustmentInterval  = p.getl("PathAdjustmentInterval", pathAdjustmentInterval);
@@ -493,6 +493,7 @@ namespace NGT {
       StdOstreamRedirector redirector(redirect);
       redirector.begin();
       try {
+        fprintf(stderr, "%d create index\n", __LINE__);
 	getIndex().createIndex(threadNumber, sizeOfRepository);
       } catch(Exception &err) {
 	redirector.end();
@@ -663,7 +664,7 @@ namespace NGT {
 	delete os;
 #endif
       } else {
-	std::cerr << "Cannot find Object Type in the property. " << property.objectType << std::endl;
+	CERR <<  " "  << "Cannot find Object Type in the property. " << property.objectType << std::endl;
 	return;
       }
       objectSpace = 0;
@@ -746,7 +747,7 @@ namespace NGT {
       if (objectSpace != 0) {
 	objectSpace->serialize(ofile + "/obj");
       } else {
-	std::cerr << "saveIndex::Warning! ObjectSpace is null. continue saving..." << std::endl;
+	CERR <<  " "  << "saveIndex::Warning! ObjectSpace is null. continue saving..." << std::endl;
       }
 #endif
     }
@@ -890,7 +891,7 @@ namespace NGT {
       try {
 	getObjectRepository().remove(id);
       } catch(Exception &err) {
-	std::cerr << "NGT::GraphIndex::remove:: cannot remove from feature. id=" << id << " " << err.what() << std::endl;
+	CERR <<  " "  << "NGT::GraphIndex::remove:: cannot remove from feature. id=" << id << " " << err.what() << std::endl;
 	throw err;
       }
     }
@@ -929,12 +930,12 @@ namespace NGT {
       objectSpace->linearSearch(po, radius, size, rs);
       result.moveFrom(rs, id);
       if ((size_t)NeighborhoodGraph::property.edgeSizeForCreation != result.size()) {
-	std::cerr << "searchForKNNGInsert::Warning! inconsistency of the sizes. ID=" << id
+	CERR <<  " "  << "searchForKNNGInsert::Warning! inconsistency of the sizes. ID=" << id
 	     << " " << NeighborhoodGraph::property.edgeSizeForCreation << ":" << result.size() << std::endl;
 	for (size_t i = 0; i < result.size(); i++) {
-	  std::cerr << result[i].id << ":" << result[i].distance << " ";
+	  CERR <<  " "  << result[i].id << ":" << result[i].distance << " ";
 	}
-	std::cerr << std::endl;
+	CERR <<  " "  << std::endl;
       }
     }
 
@@ -943,7 +944,7 @@ namespace NGT {
 			) {
       ObjectRepository &fr = objectSpace->getRepository();
       if (fr[id] == 0) {
-	std::cerr << "NGTIndex::insert empty " << id << std::endl;
+	CERR <<  " "  << "NGTIndex::insert empty " << id << std::endl;
 	return;
       }
 #ifdef NGT_SHARED_MEMORY_ALLOCATOR
@@ -972,11 +973,11 @@ namespace NGT {
       ObjectRepository &fr = objectSpace->getRepository();
       for (size_t id = 0; id < fr.size(); id++){
 	if (repo[id] == 0) {
-	  std::cerr << id << " empty" << std::endl;
+	  CERR <<  " "  << id << " empty" << std::endl;
 	  continue;
 	}
 	if ((id % 10000) == 0) {
-	  std::cerr << "checkGraph: Processed size=" << id << std::endl;
+	  CERR <<  " "  << "checkGraph: Processed size=" << id << std::endl;
 	}
 #ifdef NGT_SHARED_MEMORY_ALLOCATOR
 	Object &po = *objectSpace->allocateObject(*fr[id]);
@@ -993,7 +994,7 @@ namespace NGT {
 #endif
 
 	if (rs.size() != objects->size()) {
-	  std::cerr << "Cannot get the specified number of the results. " << rs.size() << ":" << objects->size() << std::endl;
+	  CERR <<  " "  << "Cannot get the specified number of the results. " << rs.size() << ":" << objects->size() << std::endl;
 	}
 	size_t count = 0;
 	ObjectDistances::iterator rsi = rs.begin();
@@ -1015,7 +1016,7 @@ namespace NGT {
 	  }
 	}
 	if (count != objects->size()) {
-	  std::cerr << "id=" << id << " identities=" << count << " " << objects->size() << " " << rs.size() << std::endl;
+	  CERR <<  " "  << "id=" << id << " identities=" << count << " " << objects->size() << " " << rs.size() << std::endl;
 	}
       }
     }
@@ -1023,12 +1024,12 @@ namespace NGT {
     virtual bool verify(std::vector<uint8_t> &status, bool info)
     {
       bool valid = true;
-      std::cerr << "Started verifying graph and objects" << std::endl;
+      CERR <<  " "  << "Started verifying graph and objects" << std::endl;
       GraphRepository &repo = repository;
       ObjectRepository &fr = objectSpace->getRepository();
       if (repo.size() != fr.size()) {
 	if (info) {
-	  std::cerr << "Warning! # of nodes is different from # of objects. " << repo.size() << ":" << fr.size() << std::endl;
+	  CERR <<  " "  << "Warning! # of nodes is different from # of objects. " << repo.size() << ":" << fr.size() << std::endl;
 	}
       }
       status.clear();
@@ -1040,16 +1041,16 @@ namespace NGT {
       for (size_t id = 1; id < fr.size(); id++) {
 	if (fr[id] == 0) {
 	  if (id < repo.size() && repo[id] != 0) {
-	    std::cerr << "Error! The node exists in the graph, but the object does not exist. " << id << std::endl;
+	    CERR <<  " "  << "Error! The node exists in the graph, but the object does not exist. " << id << std::endl;
 	    valid = false;
 	  }
 	}
 	if (fr[id] != 0 && repo[id] == 0) {
-	  std::cerr << "Error. No." << id << " is not registerd in the graph." << std::endl;
+	  CERR <<  " "  << "Error. No." << id << " is not registerd in the graph." << std::endl;
 	  valid = false;
 	}
 	if ((id % 1000000) == 0) {
-	  std::cerr << "  verified " << id << " entries." << std::endl;
+	  CERR <<  " "  << "  verified " << id << " entries." << std::endl;
 	}
 	if (fr[id] != 0) {
 	  try {
@@ -1059,7 +1060,7 @@ namespace NGT {
 	    Object *po = fr[id];
 #endif
 	    if (po == 0) {
-	      std::cerr << "Error! Cannot get the object. " << id << std::endl;
+	      CERR <<  " "  << "Error! Cannot get the object. " << id << std::endl;
 	      valid = false;
 	      continue;
 	    }
@@ -1067,20 +1068,20 @@ namespace NGT {
 	    objectSpace->deleteObject(po);
 #endif
 	  } catch (Exception &err) {
-	    std::cerr << "Error! Cannot get the object. " << id << " " << err.what() << std::endl;
+	    CERR <<  " "  << "Error! Cannot get the object. " << id << " " << err.what() << std::endl;
 	    valid = false;
 	    continue;
 	  }
 	}
 	if (id >= repo.size()) {
-	  std::cerr << "Error. No." << id << " is not registerd in the object repository. " << repo.size() << std::endl;
+	  CERR <<  " "  << "Error. No." << id << " is not registerd in the object repository. " << repo.size() << std::endl;
 	  valid = false;
 	}
 	if (id < repo.size() && repo[id] != 0) {
 	  try {
 	    GraphNode *objects = getNode(id);
 	    if (objects == 0) {
-	      std::cerr << "Error! Cannot get the node. " << id << std::endl;
+	      CERR <<  " "  << "Error! Cannot get the node. " << id << std::endl;
 	      valid = false;
 	    }
 #if defined(NGT_SHARED_MEMORY_ALLOCATOR)
@@ -1094,14 +1095,14 @@ namespace NGT {
 	      for (GraphNode::iterator rj = objects->begin(repo.allocator) + std::distance(objects->begin(repo.allocator), ri);
 		   rj != objects->end(repo.allocator); ++rj) {
 		if ((*ri).id == (*rj).id && std::distance(objects->begin(repo.allocator), ri) != std::distance(objects->begin(repo.allocator), rj)) {
-		  std::cerr << "Error! More than two identical objects! ID=" << (*rj).id << " idx="
+		  CERR <<  " "  << "Error! More than two identical objects! ID=" << (*rj).id << " idx="
 		       << std::distance(objects->begin(repo.allocator), ri) << ":" << std::distance(objects->begin(repo.allocator), rj)
 		       << " disntace=" << (*ri).distance << ":" << (*rj).distance << std::endl;
 #else
 	      for (GraphNode::iterator rj = objects->begin() + std::distance(objects->begin(), ri);
 		   rj != objects->end(); ++rj) {
 		if ((*ri).id == (*rj).id && std::distance(objects->begin(), ri) != std::distance(objects->begin(), rj)) {
-		  std::cerr << "Error! More than two identical objects! ID=" << (*rj).id << " idx="
+		  CERR <<  " "  << "Error! More than two identical objects! ID=" << (*rj).id << " idx="
 		       << std::distance(objects->begin(), ri) << ":" << std::distance(objects->begin(), rj)
 		       << " disntace=" << (*ri).distance << ":" << (*rj).distance << std::endl;
 #endif
@@ -1110,24 +1111,24 @@ namespace NGT {
 	      }
 
 	      if ((*ri).id == 0 || (*ri).id >= repo.size()) {
-		std::cerr << "Error! Neighbor's ID of the node is out of range. ID=" << id << std::endl;
+		CERR <<  " "  << "Error! Neighbor's ID of the node is out of range. ID=" << id << std::endl;
 		valid = false;
 	      } else if (repo[(*ri).id] == 0) {
-		std::cerr << "Error! The neighbor ID of the node is invalid. ID=" << id << " Invalid ID=" << (*ri).id << std::endl;
+		CERR <<  " "  << "Error! The neighbor ID of the node is invalid. ID=" << id << " Invalid ID=" << (*ri).id << std::endl;
 		if (fr[(*ri).id] == 0) {
-		  std::cerr <<  "The neighbor doesn't exist in the object repository as well. ID=" << (*ri).id << std::endl;
+		  CERR <<  " "  <<  "The neighbor doesn't exist in the object repository as well. ID=" << (*ri).id << std::endl;
 		} else {
-		  std::cerr <<  "The neighbor exists in the object repository. ID=" << (*ri).id << std::endl;
+		  CERR <<  " "  <<  "The neighbor exists in the object repository. ID=" << (*ri).id << std::endl;
 		}
 		valid = false;
 	      }
 	      if ((*ri).distance < 0.0) {
-		std::cerr << "Error! Neighbor's distance is munus. ID=" << id << std::endl;
+		CERR <<  " "  << "Error! Neighbor's distance is munus. ID=" << id << std::endl;
 		valid = false;
 	      }
 	    }
 	  } catch (Exception &err) {
-	    std::cerr << "Error! Cannot get the node. " << id << " " << err.what() << std::endl;
+	    CERR <<  " "  << "Error! Cannot get the node. " << id << " " << err.what() << std::endl;
 	    valid = false;
 	  }
 	}
@@ -1279,7 +1280,7 @@ namespace NGT {
 	sc.distanceComputationCount = so.distanceComputationCount;
 	sc.visitCount = so.visitCount;
       } catch(Exception &err) {
-	std::cerr << err.what() << std::endl;
+	CERR <<  " "  << err.what() << std::endl;
 	Exception e(err);
 	throw e;
       }
@@ -1628,7 +1629,7 @@ namespace NGT {
     void insert(ObjectID id) {
       ObjectRepository &fr = GraphIndex::objectSpace->getRepository();
       if (fr[id] == 0) {
-	std::cerr << "GraphAndTreeIndex::insert empty " << id << std::endl;
+	CERR <<  " "  << "GraphAndTreeIndex::insert empty " << id << std::endl;
 	return;
       }
 #ifdef NGT_SHARED_MEMORY_ALLOCATOR
@@ -1650,8 +1651,8 @@ namespace NGT {
 	try {
 	  DVPTree::insert(tiobj);
 	} catch (Exception &err) {
-	  std::cerr << "GraphAndTreeIndex::insert: Fatal error" << std::endl;
-	  std::cerr << err.what() << std::endl;
+	  CERR <<  " "  << "GraphAndTreeIndex::insert: Fatal error" << std::endl;
+	  CERR <<  " "  << err.what() << std::endl;
 	  return;
 	}
       }
